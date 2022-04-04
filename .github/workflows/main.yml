@@ -1,0 +1,47 @@
+name: CMake
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup
+      uses: ilammy/msvc-dev-cmd@v1.5.0
+      with:
+        arch: x86
+
+    - name: Compile
+      run: |
+        mkdir bin
+        cd bin
+        cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ../
+        ninja
+        mkdir output_III
+        mkdir output_VC
+        mkdir output_SA
+        cp ChaosModComplementaries.III.asi output_III/ChaosModComplementaries.III.asi
+        cp ChaosModComplementaries.VC.asi output_VC/ChaosModComplementaries.VC.asi
+        cp ChaosModComplementaries.SA.asi output_SA/ChaosModComplementaries.SA.asi
+
+    - name: Upload III
+      uses: actions/upload-artifact@v1
+      with:
+        name: "ChaosModComplementaries.III"
+        path: bin/output_III
+
+    - name: Upload VC
+      uses: actions/upload-artifact@v1
+      with:
+        name: "ChaosModComplementaries.VC"
+        path: bin/output_VC
+        
+    - name: Upload SA
+      uses: actions/upload-artifact@v1
+      with:
+        name: "ChaosModComplementaries.SA"
+        path: bin/output_SA
+  
