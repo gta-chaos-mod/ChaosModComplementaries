@@ -1,11 +1,13 @@
 #pragma once
 
-#include "Config.cpp"
+#include "Config.h"
 
-#include "CCheat.h"
-#include "CPickups.h"
-#include "CStats.h"
-#include "CTheScripts.h"
+#include <CAnimManager.h>
+#include <CCamera.h>
+#include <CCheat.h>
+#include <CPickups.h>
+#include <CStats.h>
+#include <CTheScripts.h>
 
 using namespace plugin;
 
@@ -33,7 +35,7 @@ public:
             patch::Nop (0x508817, 6);
         }
 
-        if (Config::GetOrDefault ("Fixes.RemoveFrameDelay", false))
+        if (Config::GetOrDefault ("Fixes.RemoveFrameDelay", true))
         {
             // Fix frame delay so the game runs at proper 30 FPS and not 30 - 5
             // / "25 FPS"
@@ -44,6 +46,11 @@ public:
         {
             // Overwrite gang territories check for the finale of the game
             patch::RedirectCall (0x4759B0, Hooked_Finale_GetGangTerritories);
+        }
+
+        if (Config::GetOrDefault ("Fixes.DisableBlur", false))
+        {
+            patch::RedirectCall (0x704E8A, Hooked_DrawBlur);
         }
 
         // Overwrite "GetStatValue" OpCode for mission checks
@@ -88,7 +95,7 @@ public:
     HandleNoCheatInput ()
     {
         if (Config::GetOrDefault ("Fixes.DisableCheatInput", false)
-             && !KeyPressed (VK_SHIFT))
+            && !KeyPressed (VK_SHIFT))
         {
             CCheat::m_CheatString[0] = 0;
         }
@@ -99,29 +106,25 @@ public:
     {
         if (Config::GetOrDefault ("Fixes.SkipWastedBustedMessages", false))
         {
-            // TODO: Fix
             CPickups::RemovePickUp (GetGlobalVariable<int> (669));
             CPickups::RemovePickUp (GetGlobalVariable<int> (670));
             CPickups::RemovePickUp (GetGlobalVariable<int> (671));
-        } 
+        }
     }
 
-    static __int16 __fastcall Hooked_Finale_GetGangTerritories (
+    static void __fastcall Hooked_Finale_GetGangTerritories (
         CRunningScript *thisScript, void *edx, __int16 count)
     {
         CTheScripts::ScriptParams[0].iParam
             = std::max (35, CTheScripts::ScriptParams[0].iParam);
 
-        return CallMethodAndReturn<__int16, 0x464370, CRunningScript *> (
-            thisScript,
-            count); // CRunningScript::StoreParameters
+        thisScript->StoreParameters (count);
     }
 
     static double
     HookedOpCodeGetStatValue (int statid)
     {
-        double stat
-            = CallAndReturn<double, 0x558E40> (statid); // CStats::GetStatValue
+        double stat = CStats::GetStatValue (statid);
         if (statid == eStats::STAT_FAT
             && Config::GetOrDefault ("Fixes.SkipFatCheck", false))
         {
@@ -133,5 +136,10 @@ public:
             stat = std::max (51.0, stat);
         }
         return stat;
+    }
+
+    static void
+    Hooked_DrawBlur ()
+    {
     }
 };

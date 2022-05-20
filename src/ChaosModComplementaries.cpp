@@ -1,9 +1,12 @@
-#include "plugin.h"
-
 #include "GameHandler.cpp"
+
+#include <plugin.h>
 
 class ChaosModComplementaries
 {
 public:
-    ChaosModComplementaries () { GameHandler::Initialise (); }
+    ChaosModComplementaries ()
+    {
+        GameHandler::Initialise ();
+    }
 } chaosModComplementaries;

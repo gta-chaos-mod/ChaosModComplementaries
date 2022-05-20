@@ -1,10 +1,10 @@
 #pragma once
 
+#include "cpptoml.h"
+
 #include <filesystem>
 
-#include "plugin.h"
-
-#include "cpptoml.h"
+#include <plugin.h>
 
 class Config
 {
@@ -46,8 +46,12 @@ SkipLungCapacityCheck = false
 DisableInteriorMusic = false
 
 # Remove the 14ms frame delay to make the game run in proper 30 FPS instead of 30 FPS - 5 / "25 FPS"
+# Default: true
+RemoveFrameDelay = true
+
+# Disables the annoying blur that happens when you drive too fast to give you a sense of "speed"
 # Default: false
-RemoveFrameDelay = false
+DisableBlur = false
 
 # Disables warning that the player has cheated when trying to save the game
 # Default: true
@@ -97,10 +101,7 @@ public:
     static T
     GetOrDefault (std::string key, T default_val)
     {
-        if (!config)
-        {
-            return default_val;
-        }
+        if (!config) return default_val;
 
         return config->get_qualified_as<T> (key).value_or (default_val);
     }

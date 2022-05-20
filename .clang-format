@@ -25,21 +25,7 @@ AccessModifierOffset: -4
 AlwaysBreakAfterDefinitionReturnType: All
 BinPackArguments: true
 BinPackParameters: true
-BraceWrapping:
-  AfterClass: true
-  AfterControlStatement: true
-  AfterEnum: true
-  AfterFunction: true
-  AfterNamespace: false
-  AfterObjCDeclaration: true
-  AfterStruct: true
-  AfterUnion: true
-  BeforeCatch: true
-  BeforeElse: true
-  IndentBraces: true
 BreakBeforeBinaryOperators: All
-BreakBeforeBraces: Allman
-BreakBeforeTernaryOperators: true
 ColumnLimit: 80
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
@@ -128,11 +114,11 @@ ForEachMacros: [
 'FOR_INIT_STMT',
 'FOR_SCOPE'
 ]
-IndentCaseLabels: false
+IndentCaseLabels: true
 NamespaceIndentation: None
 PenaltyBreakBeforeFirstCallParameter: 100
 PointerAlignment: Right
-SortIncludes: false
+SortIncludes: CaseSensitive
 SpaceAfterCStyleCast: true
 SpaceBeforeParens: Always
 SpacesBeforeTrailingComments: 1
@@ -140,4 +126,34 @@ UseTab: Never
 AlignConsecutiveDeclarations: true
 AlignConsecutiveAssignments: true
 AlignEscapedNewlines: Right
+AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortFunctionsOnASingleLine: Empty
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"'
+    Priority: 1
+  - Regex: '^<[a-z_/]*>'
+    Priority: 2
+  - Regex: '^<[A-Za-z0-9_/]'
+    Priority: 3
+BraceWrapping:
+  AfterCaseLabel: true
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: false
+  AfterObjCDeclaration: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: true
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+BreakBeforeBraces: Allman
+BreakBeforeTernaryOperators: true
+EmptyLineBeforeAccessModifier: Always
+MaxEmptyLinesToKeep: 1
