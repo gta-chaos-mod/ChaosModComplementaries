@@ -41,6 +41,11 @@ SkipFatCheck = false
 # Default: false
 SkipLungCapacityCheck = false
 
+# Disables the ability to play replays
+# (Replays can cause crashes in some scenarios with certain effects)
+# Default: false
+DisableReplays = false
+
 # Disables interior music in places such as Caligula's Casino (Helps against copyright)
 # Default: false
 DisableInteriorMusic = false

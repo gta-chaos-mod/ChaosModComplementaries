@@ -48,6 +48,11 @@ public:
             patch::RedirectCall (0x4759B0, Hooked_Finale_GetGangTerritories);
         }
 
+        if (Config::GetOrDefault ("Fixes.DisableReplays", false))
+        {
+            patch::Nop (0x53C090, 5);
+        }
+
         if (Config::GetOrDefault ("Fixes.DisableBlur", false))
         {
             patch::RedirectCall (0x704E8A, Hooked_DrawBlur);
