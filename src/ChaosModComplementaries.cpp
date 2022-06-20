@@ -1,4 +1,4 @@
-#include "GameHandler.cpp"
+#include "GameHandler.h"
 
 #include <plugin.h>
 

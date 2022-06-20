@@ -58,14 +58,14 @@ public:
             patch::RedirectCall (0x704E8A, Hooked_DrawBlur);
         }
 
-        if (Config::GetOrDefault ("Fixes.PreventLosingWeapons", false))
+        if (Config::GetOrDefault ("Fixes.PreventLosingWeapons", true))
         {
             for (int address : {0x442E16 + 1, 0x4431CF + 1})
             {
-                static bool keepWeaponsAfterDeathOrBusted = true;
+                static bool loseWeaponsAfterDeathOrBusted = false;
 
                 injector::WriteMemory<bool *> (address,
-                                               &keepWeaponsAfterDeathOrBusted);
+                                               &loseWeaponsAfterDeathOrBusted);
             }
         }
 
