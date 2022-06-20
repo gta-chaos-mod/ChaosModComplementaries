@@ -58,6 +58,17 @@ public:
             patch::RedirectCall (0x704E8A, Hooked_DrawBlur);
         }
 
+        if (Config::GetOrDefault ("Fixes.PreventLosingWeapons", false))
+        {
+            for (int address : {0x442E16 + 1, 0x4431CF + 1})
+            {
+                static bool keepWeaponsAfterDeathOrBusted = true;
+
+                injector::WriteMemory<bool *> (address,
+                                               &keepWeaponsAfterDeathOrBusted);
+            }
+        }
+
         // Overwrite "GetStatValue" OpCode for mission checks
         // Right now it can help with Amphibious Assault, Black Project and
         // Green Goo
@@ -68,7 +79,6 @@ public:
     ProcessGame ()
     {
         HandleCheatWarning ();
-        HandleNoWeaponRemoval ();
         HandleNoCheatInput ();
         HandleSkipWastedBustedHelpMessages ();
     }
@@ -81,18 +91,6 @@ public:
             // Make sure the player never cheated
             CCheat::m_bHasPlayerCheated = false;
             CStats::SetStatValue (eStats::STAT_TIMES_CHEATED, 0.0);
-        }
-    }
-
-    static void
-    HandleNoWeaponRemoval ()
-    {
-        if (Config::GetOrDefault ("Fixes.PreventLosingWeapons", false))
-        {
-            injector::WriteMemory<byte> (0x8A5E48,
-                                         0); // Lose Stuff After Wasted
-            injector::WriteMemory<byte> (0x8A5E49,
-                                         0); // Lose Stuff After Busted
         }
     }
 
