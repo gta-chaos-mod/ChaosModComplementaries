@@ -2,6 +2,8 @@
 
 #include "Config.h"
 
+#include <thread>
+
 #include <CAnimManager.h>
 #include <CCamera.h>
 #include <CCheat.h>
@@ -9,6 +11,7 @@
 #include <CStats.h>
 #include <CTaskSimpleRunNamedAnim.h>
 #include <CTheScripts.h>
+#include <CTimer.h>
 
 using namespace plugin;
 
@@ -21,6 +24,9 @@ GetGlobalVariable (uint32_t index)
 
 class GameHandler
 {
+    static inline bool *currentUJStatus = reinterpret_cast<bool *> (0xA9A898);
+    static inline bool  oldCurrentUJStatus = 0;
+
 public:
     static void
     Initialise ()
@@ -132,38 +138,60 @@ public:
         HandleCheatWarning ();
         HandleNoCheatInput ();
         HandleSkipWastedBustedHelpMessages ();
+        HandleFastStuntJumps ();
     }
 
     static void
     HandleCheatWarning ()
     {
-        if (Config::GetOrDefault ("Fixes.DisableCheatWarning", true))
-        {
-            // Make sure the player never cheated
-            CCheat::m_bHasPlayerCheated = false;
-            CStats::SetStatValue (eStats::STAT_TIMES_CHEATED, 0.0);
-        }
+        if (!Config::GetOrDefault ("Fixes.DisableCheatWarning", true)) return;
+
+        // Make sure the player never cheated
+        CCheat::m_bHasPlayerCheated = false;
+        CStats::SetStatValue (eStats::STAT_TIMES_CHEATED, 0.0);
     }
 
     static void
     HandleNoCheatInput ()
     {
-        if (Config::GetOrDefault ("Fixes.DisableCheatInput", false)
-            && !KeyPressed (VK_SHIFT))
-        {
-            CCheat::m_CheatString[0] = 0;
-        }
+        if (!Config::GetOrDefault ("Fixes.DisableCheatInput", false)
+            || KeyPressed (VK_SHIFT))
+            return;
+
+        CCheat::m_CheatString[0] = 0;
     }
 
     static void
     HandleSkipWastedBustedHelpMessages ()
     {
-        if (Config::GetOrDefault ("Fixes.SkipWastedBustedMessages", false))
+        if (!Config::GetOrDefault ("Fixes.SkipWastedBustedMessages", false))
+            return;
+
+        CPickups::RemovePickUp (GetGlobalVariable<int> (669));
+        CPickups::RemovePickUp (GetGlobalVariable<int> (670));
+        CPickups::RemovePickUp (GetGlobalVariable<int> (671));
+    }
+
+    static void
+    HandleFastStuntJumps ()
+    {
+        if (!Config::GetOrDefault ("Fixes.FastStuntJumps", false)) return;
+
+        if (!oldCurrentUJStatus && *currentUJStatus)
         {
-            CPickups::RemovePickUp (GetGlobalVariable<int> (669));
-            CPickups::RemovePickUp (GetGlobalVariable<int> (670));
-            CPickups::RemovePickUp (GetGlobalVariable<int> (671));
+            std::thread timeScaleThread (
+                []
+                {
+                    std::this_thread::sleep_for (
+                        std::chrono::milliseconds (500));
+
+                    CTimer::ms_fTimeScale = 1.0f;
+                });
+
+            timeScaleThread.detach ();
         }
+
+        oldCurrentUJStatus = *currentUJStatus;
     }
 
     static void __fastcall Hooked_Finale_GetGangTerritories (

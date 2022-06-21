@@ -73,6 +73,10 @@ DisableCheatInput = false
 # Default: false
 DisableMinigameZoneMusic = false
 
+# Makes stunt jumps faster by resetting the game-speed 500ms after the jump started
+# Default: false
+FastStuntJumps = false
+
 #######################################################)";
 #else
     inline static std::string configContent = "";
