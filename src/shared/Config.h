@@ -68,6 +68,11 @@ DisableCheatWarning = true
 # Default: false
 DisableCheatInput = false
 
+# Disables the music that plays at the van during Life's A Beach and
+# at the lowrider meetup during Cesar Vialpando
+# Default: false
+DisableMinigameZoneMusic = false
+
 #######################################################)";
 #else
     inline static std::string configContent = "";

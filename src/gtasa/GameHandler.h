@@ -7,6 +7,7 @@
 #include <CCheat.h>
 #include <CPickups.h>
 #include <CStats.h>
+#include <CTaskSimpleRunNamedAnim.h>
 #include <CTheScripts.h>
 
 using namespace plugin;
@@ -69,10 +70,60 @@ public:
             }
         }
 
+        if (Config::GetOrDefault ("Fixes.DisableMinigameZoneMusic", false))
+        {
+            patch::RedirectCall (0x476838, Hooked_AudioZoneEnableSound);
+        }
+
+        // TODO: Option to disable music during dance and lowrider minigame
+        // We will probably have to set the SFX volume to 0.
+        // Alternatively, changing the pointer to our own variable
+
         // Overwrite "GetStatValue" OpCode for mission checks
         // Right now it can help with Amphibious Assault, Black Project and
         // Green Goo
         patch::RedirectCall (0x49444E, HookedOpCodeGetStatValue);
+
+        // Parachute landing fix
+        // https://gtaforums.com/topic/808143-parachute-landing-fixed-scm/
+        /*
+        patch::RedirectCall (0x470302, Hooked_CTaskSimpleRunNamedAnim);
+        patch::RedirectCall (0x4702B5, Hooked_CTaskSimpleRunNamedAnim);
+        */
+    }
+
+    static void
+    Hooked_AudioZoneEnableSound (char *zoneName, bool enable)
+    {
+        std::string zoneName_str (zoneName);
+        if (zoneName_str == "BEACH" || zoneName_str == "LOWRIDE")
+            enable = false;
+
+        Call<0x508320> (zoneName, enable);
+    }
+
+    static CTaskSimpleRunNamedAnim *
+    Hooked_CTaskSimpleRunNamedAnim (CTaskSimpleRunNamedAnim *thisAnim,
+                                    char *animName, char *fileName, int flags,
+                                    float frameDelta, int time,
+                                    char nonInterruptable,
+                                    char isActiveSequence, char dontLockZ,
+                                    char a10)
+    {
+        MessageBox (NULL, animName, NULL, NULL);
+        if (std::string (animName) == "FALL_FRONT")
+        {
+            animName   = (char *) "PARA_LAND";
+            fileName   = (char *) "PARACHUTE";
+            frameDelta = 10.0f;
+            time       = -2;
+        }
+        // 0812: AS_actor -1 perform_animation "FALL_FRONT" IFP "PED"
+        // framedelta 20.0 loopA 0 lockX 0 lockY 0 lockF 1 time 700 // versionB
+
+        return new CTaskSimpleRunNamedAnim (animName, fileName, flags,
+                                            frameDelta, time, nonInterruptable,
+                                            isActiveSequence, dontLockZ, a10);
     }
 
     static void
