@@ -90,10 +90,6 @@ public:
         // Right now it can help with Amphibious Assault, Black Project and
         // Green Goo
         patch::RedirectCall (0x49444E, Hooked_OpCodeGetStatValue);
-
-        // Broken parachute fix where it plays the animation but CJ can't be
-        // controlled mid-air
-        patch::RedirectCall (0x443082, Hooked_BrokenParachuteFix);
     }
 
     static void
@@ -187,17 +183,5 @@ public:
             stat = std::max (51.0, stat);
         }
         return stat;
-    }
-
-    static void
-    Hooked_BrokenParachuteFix ()
-    {
-        CReferences::RemoveReferencesToPlayer ();
-
-        int &parachuteCreationStage = GetGlobalVariable<int> (1497);
-        int &freefallStage          = GetGlobalVariable<int> (1513);
-
-        parachuteCreationStage = 0;
-        freefallStage          = 0;
     }
 };
