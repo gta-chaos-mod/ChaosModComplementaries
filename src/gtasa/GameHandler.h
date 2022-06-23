@@ -8,6 +8,7 @@
 #include <CCamera.h>
 #include <CCheat.h>
 #include <CPickups.h>
+#include <CReferences.h>
 #include <CStats.h>
 #include <CTaskSimpleRunNamedAnim.h>
 #include <CTheScripts.h>
@@ -90,12 +91,21 @@ public:
         // Green Goo
         patch::RedirectCall (0x49444E, Hooked_OpCodeGetStatValue);
 
-        // Parachute landing fix
-        // https://gtaforums.com/topic/808143-parachute-landing-fixed-scm/
-        /*
-        patch::RedirectCall (0x470302, Hooked_CTaskSimpleRunNamedAnim);
-        patch::RedirectCall (0x4702B5, Hooked_CTaskSimpleRunNamedAnim);
-        */
+        // Broken parachute fix where it plays the animation but CJ can't be
+        // controlled mid-air
+        patch::RedirectCall (0x443082, Hooked_BrokenParachuteFix);
+    }
+
+    static void
+    Hooked_BrokenParachuteFix ()
+    {
+        CReferences::RemoveReferencesToPlayer ();
+
+        int &parachuteCreationStage = GetGlobalVariable<int> (1497);
+        int &freefallStage          = GetGlobalVariable<int> (1513);
+
+        parachuteCreationStage = 0;
+        freefallStage          = 0;
     }
 
     static void
@@ -106,30 +116,6 @@ public:
             enable = false;
 
         Call<0x508320> (zoneName, enable);
-    }
-
-    static CTaskSimpleRunNamedAnim *
-    Hooked_CTaskSimpleRunNamedAnim (CTaskSimpleRunNamedAnim *thisAnim,
-                                    char *animName, char *fileName, int flags,
-                                    float frameDelta, int time,
-                                    char nonInterruptable,
-                                    char isActiveSequence, char dontLockZ,
-                                    char a10)
-    {
-        MessageBox (NULL, animName, NULL, NULL);
-        if (std::string (animName) == "FALL_FRONT")
-        {
-            animName   = (char *) "PARA_LAND";
-            fileName   = (char *) "PARACHUTE";
-            frameDelta = 10.0f;
-            time       = -2;
-        }
-        // 0812: AS_actor -1 perform_animation "FALL_FRONT" IFP "PED"
-        // framedelta 20.0 loopA 0 lockX 0 lockY 0 lockF 1 time 700 // versionB
-
-        return new CTaskSimpleRunNamedAnim (animName, fileName, flags,
-                                            frameDelta, time, nonInterruptable,
-                                            isActiveSequence, dontLockZ, a10);
     }
 
     static void
