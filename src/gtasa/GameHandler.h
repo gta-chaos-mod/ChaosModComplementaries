@@ -82,11 +82,6 @@ public:
             }
         }
 
-        if (Config::GetOrDefault ("Fixes.DisableMinigameZoneMusic", false))
-        {
-            patch::RedirectCall (0x476838, Hooked_AudioZoneEnableSound);
-        }
-
         // TODO: Option to disable music during dance and lowrider minigame
         // We will probably have to set the SFX volume to 0.
         // Alternatively, changing the pointer to our own variable
@@ -99,28 +94,6 @@ public:
         // Broken parachute fix where it plays the animation but CJ can't be
         // controlled mid-air
         patch::RedirectCall (0x443082, Hooked_BrokenParachuteFix);
-    }
-
-    static void
-    Hooked_BrokenParachuteFix ()
-    {
-        CReferences::RemoveReferencesToPlayer ();
-
-        int &parachuteCreationStage = GetGlobalVariable<int> (1497);
-        int &freefallStage          = GetGlobalVariable<int> (1513);
-
-        parachuteCreationStage = 0;
-        freefallStage          = 0;
-    }
-
-    static void
-    Hooked_AudioZoneEnableSound (char *zoneName, bool enable)
-    {
-        std::string zoneName_str (zoneName);
-        if (zoneName_str == "BEACH" || zoneName_str == "LOWRIDE")
-            enable = false;
-
-        Call<0x508320> (zoneName, enable);
     }
 
     static void
@@ -194,6 +167,11 @@ public:
         thisScript->StoreParameters (count);
     }
 
+    static void
+    Hooked_DrawBlur ()
+    {
+    }
+
     static double
     Hooked_OpCodeGetStatValue (int statID)
     {
@@ -212,7 +190,14 @@ public:
     }
 
     static void
-    Hooked_DrawBlur ()
+    Hooked_BrokenParachuteFix ()
     {
+        CReferences::RemoveReferencesToPlayer ();
+
+        int &parachuteCreationStage = GetGlobalVariable<int> (1497);
+        int &freefallStage          = GetGlobalVariable<int> (1513);
+
+        parachuteCreationStage = 0;
+        freefallStage          = 0;
     }
 };
