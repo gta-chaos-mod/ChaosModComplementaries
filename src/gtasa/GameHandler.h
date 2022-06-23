@@ -98,7 +98,6 @@ public:
         HandleCheatWarning ();
         HandleNoCheatInput ();
         HandleSkipWastedBustedHelpMessages ();
-        HandleFastStuntJumps ();
     }
 
     static void
@@ -130,28 +129,6 @@ public:
         CPickups::RemovePickUp (GetGlobalVariable<int> (669));
         CPickups::RemovePickUp (GetGlobalVariable<int> (670));
         CPickups::RemovePickUp (GetGlobalVariable<int> (671));
-    }
-
-    static void
-    HandleFastStuntJumps ()
-    {
-        if (!Config::GetOrDefault ("Fixes.FastStuntJumps", false)) return;
-
-        if (!oldCurrentUJStatus && *currentUJStatus)
-        {
-            std::thread timeScaleThread (
-                []
-                {
-                    std::this_thread::sleep_for (
-                        std::chrono::milliseconds (500));
-
-                    CTimer::ms_fTimeScale = 1.0f;
-                });
-
-            timeScaleThread.detach ();
-        }
-
-        oldCurrentUJStatus = *currentUJStatus;
     }
 
     static void __fastcall Hooked_Finale_GetGangTerritories (
