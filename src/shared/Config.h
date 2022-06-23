@@ -47,6 +47,7 @@ SkipLungCapacityCheck = false
 DisableReplays = false
 
 # Disables interior music in places such as Caligula's Casino (Helps against copyright)
+# Also disables music playing at the van in Life's A Beach and the lowrider meetup in Cesar Vialpando
 # Default: false
 DisableInteriorMusic = false
 
@@ -67,11 +68,6 @@ DisableCheatWarning = true
 # Cheats can still be input when holding SHIFT.
 # Default: false
 DisableCheatInput = false
-
-# Disables the music that plays at the van during Life's A Beach and
-# at the lowrider meetup during Cesar Vialpando
-# Default: false
-DisableMinigameZoneMusic = false
 
 # Makes stunt jumps faster by resetting the game-speed 500ms after the jump started
 # Default: false
