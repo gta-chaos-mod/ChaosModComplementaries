@@ -88,7 +88,7 @@ public:
         // Overwrite "GetStatValue" OpCode for mission checks
         // Right now it can help with Amphibious Assault, Black Project and
         // Green Goo
-        patch::RedirectCall (0x49444E, HookedOpCodeGetStatValue);
+        patch::RedirectCall (0x49444E, Hooked_OpCodeGetStatValue);
 
         // Parachute landing fix
         // https://gtaforums.com/topic/808143-parachute-landing-fixed-scm/
@@ -204,15 +204,15 @@ public:
     }
 
     static double
-    HookedOpCodeGetStatValue (int statid)
+    Hooked_OpCodeGetStatValue (int statID)
     {
-        double stat = CStats::GetStatValue (statid);
-        if (statid == eStats::STAT_FAT
+        double stat = CStats::GetStatValue (statID);
+        if (statID == eStats::STAT_FAT
             && Config::GetOrDefault ("Fixes.SkipFatCheck", false))
         {
             stat = std::min (stat, 600.0);
         }
-        else if (statid == eStats::STAT_LUNG_CAPACITY
+        else if (statID == eStats::STAT_LUNG_CAPACITY
                  && Config::GetOrDefault ("Fixes.SkipLungCapacityCheck", false))
         {
             stat = std::max (51.0, stat);
