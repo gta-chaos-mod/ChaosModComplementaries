@@ -36,9 +36,14 @@ public:
 
         Events::gameProcessEvent.after += ProcessGame;
 
+        // Disable Interior Music
         if (Config::GetOrDefault ("Fixes.DisableInteriorMusic", true))
         {
-            // Disable Interior Music
+            // Spheres
+            patch::Nop (0x50844A, 6);
+            patch::Nop (0x5084B0, 6);
+
+            // Boxes
             patch::Nop (0x508450, 6);
             patch::Nop (0x508817, 6);
         }
