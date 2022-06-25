@@ -25,9 +25,6 @@ GetGlobalVariable (uint32_t index)
 
 class GameHandler
 {
-    static inline bool *currentUJStatus = reinterpret_cast<bool *> (0xA9A898);
-    static inline bool  oldCurrentUJStatus = 0;
-
 public:
     static void
     Initialise ()
