@@ -7,6 +7,6 @@ class ChaosModComplementaries
 public:
     ChaosModComplementaries ()
     {
-        GameHandler::Initialise ();
+        Events::initRwEvent += GameHandler::Initialise;
     }
 } chaosModComplementaries;

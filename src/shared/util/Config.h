@@ -20,7 +20,7 @@ private:
 # Various fixes
 [Fixes]
 
-# Prevent losing weapons when dying or getting busted without the need of Katie or Barbara as girlfriends.
+# Prevent losing weapons when dying or getting busted without the need of Katie or Barbara as girlfriends
 # Default: false
 PreventLosingWeapons = false
 
@@ -40,6 +40,15 @@ SkipFatCheck = false
 # Whether to skip the lung capacity stat check for Amphibious Assault
 # Default: false
 SkipLungCapacityCheck = false
+
+# Will set the price of the airport to $5 so it can still be bought when very low on money
+# Default: true
+CheapAirport = true
+
+# Allows taking part in the races ("High-Stakes, Low-Rider", "Wu Zi Mu" and "Farewell, My Love")
+# with all vehicle classes
+# Default: false
+AllowRacesWithAllVehicles = false
 
 # Disables the ability to play replays
 # (Replays can cause crashes in some scenarios with certain effects)

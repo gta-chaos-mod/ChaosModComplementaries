@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Config.h"
+#include "util/Config.h"
+#include "util/GlobalHooksInstance.h"
+#include "util/hooks/HookMacros.h"
 
 #include <thread>
 
@@ -25,10 +27,14 @@ GetGlobalVariable (uint32_t index)
 
 class GameHandler
 {
+    static inline bool initialised = false;
+
 public:
     static void
     Initialise ()
     {
+        if (initialised) return;
+
         Config::Init ();
 
         Events::gameProcessEvent.after += ProcessGame;
@@ -55,7 +61,9 @@ public:
         if (Config::GetOrDefault ("Fixes.SkipGangTerritoriesCheck", false))
         {
             // Overwrite gang territories check for the finale of the game
-            patch::RedirectCall (0x4759B0, Hooked_Finale_GetGangTerritories);
+            HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+                              Hooked_Finale_GetGangTerritories,
+                              void (CRunningScript *, __int16), 0x4759B0);
         }
 
         if (Config::GetOrDefault ("Fixes.DisableReplays", false))
@@ -65,7 +73,8 @@ public:
 
         if (Config::GetOrDefault ("Fixes.DisableBlur", false))
         {
-            patch::RedirectCall (0x704E8A, Hooked_DrawBlur);
+            HOOK (globalHooksInstance.Get (), Hooked_DrawBlur, void (float),
+                  0x704E8A);
         }
 
         if (Config::GetOrDefault ("Fixes.PreventLosingWeapons", true))
@@ -86,7 +95,25 @@ public:
         // Overwrite "GetStatValue" OpCode for mission checks
         // Right now it can help with Amphibious Assault, Black Project and
         // Green Goo
-        patch::RedirectCall (0x49444E, Hooked_OpCodeGetStatValue);
+        HOOK_ARGS (globalHooksInstance.Get (), Hooked_OpCodeGetStatValue,
+                   double (int), 0x49444E);
+
+        if (Config::GetOrDefault ("Fixes.AllowRacesWithAllVehicles", false))
+        {
+            // Override Lowrider and Street Racer checks
+            HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+                              Hooked_IsLowRiderOrStreetRacer,
+                              unsigned __int16 (CRunningScript *, char),
+                              0x478528, 0x478575);
+
+            // Override Cesar Race Badlands
+            HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+                              Hooked_CesarRaceBadlands,
+                              unsigned __int16 (CRunningScript *, char),
+                              0x48ABC6);
+        }
+
+        initialised = true;
     }
 
     static void
@@ -95,6 +122,24 @@ public:
         HandleCheatWarning ();
         HandleNoCheatInput ();
         HandleSkipWastedBustedHelpMessages ();
+        HandleCheapAirport ();
+    }
+
+    static void
+    HandleCheapAirport ()
+    {
+        if (!Config::GetOrDefault ("Fixes.CheapAirstrip", true)) return;
+
+        for (int i = 0; i < MAX_NUM_PICKUPS; i++)
+        {
+            CPickup &pickup = CPickups::aPickUps[i];
+            if (pickup.m_nPickupType == PICKUP_NONE) continue;
+
+            if (pickup.m_nAmmo == 80000)
+            {
+                pickup.m_nAmmo = 5;
+            }
+        }
     }
 
     static void
@@ -128,34 +173,56 @@ public:
         CPickups::RemovePickUp (GetGlobalVariable<int> (671));
     }
 
-    static void __fastcall Hooked_Finale_GetGangTerritories (
-        CRunningScript *thisScript, void *edx, __int16 count)
+    static void
+    Hooked_Finale_GetGangTerritories (auto &&cb, CRunningScript *script,
+                                      __int16 count)
     {
         CTheScripts::ScriptParams[0].iParam
             = std::max (35, CTheScripts::ScriptParams[0].iParam);
 
-        thisScript->StoreParameters (count);
+        cb ();
     }
 
     static void
-    Hooked_DrawBlur ()
+    Hooked_DrawBlur (auto &&cb)
     {
     }
 
     static double
-    Hooked_OpCodeGetStatValue (int statID)
+    Hooked_OpCodeGetStatValue (auto &&cb, int statID)
     {
-        double stat = CStats::GetStatValue (statID);
-        if (statID == eStats::STAT_FAT
+        double stat = cb ();
+
+        if (statID == STAT_FAT
             && Config::GetOrDefault ("Fixes.SkipFatCheck", false))
         {
             stat = std::min (stat, 600.0);
         }
-        else if (statID == eStats::STAT_LUNG_CAPACITY
+        else if (statID == STAT_LUNG_CAPACITY
                  && Config::GetOrDefault ("Fixes.SkipLungCapacityCheck", false))
         {
             stat = std::max (51.0, stat);
         }
+
         return stat;
+    }
+
+    static unsigned __int16
+    Hooked_IsLowRiderOrStreetRacer (auto &&cb, CRunningScript *thisScript,
+                                    char &flag)
+    {
+        if (thisScript && std::string (thisScript->m_szName) == "cesar")
+            flag = 1;
+
+        return cb ();
+    }
+
+    static unsigned __int16
+    Hooked_CesarRaceBadlands (auto &&cb, CRunningScript *thisScript, char &flag)
+    {
+        if (thisScript && std::string (thisScript->m_szName) == "bcesar")
+            flag = 1;
+
+        return cb ();
     }
 };
