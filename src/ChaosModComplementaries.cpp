@@ -2,6 +2,8 @@
 
 #include <plugin.h>
 
+using namespace plugin;
+
 class ChaosModComplementaries
 {
 public:
