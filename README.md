@@ -18,7 +18,9 @@ The mod currently has no options for GTA Vice City.
 
 ## GTA San Andreas
 It currently has options to:
+- **Skip** the tutorials for the hospital and police station by removing their info pickups
 - **Disable music in interiors**
+- **Disable replays**
 - **Disable** the weird **frame delay when the frame limiter is enabled** (14ms every frame, effectively causing the game to be in "25 FPS")
 - **Skip** the **Lung Capacity stat check** for the mission **"Amphibious Assault"**
 - **Skip** the **Fat stat check** for the missions **"Black Project"** and **"Green Goo"**
@@ -28,3 +30,5 @@ It currently has options to:
 - **Remove** the **tutorial help markers / pickups** at the 2 hospitals and police station in Los Santos
 - **Keep your weapons** when you die or get busted without the need for the corresponding girlfriends (Denise and Barbara)
 - **Disable** the on-screen blur that happens when you drive fast
+- **Allow** story races ("High Stakes, Low-Rider", "Wu Zi Mu" and "Farewell, My Love...") with **all** vehicle classes
+- **Make the airport in the Desert super cheap** (Only $5)
