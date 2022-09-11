@@ -50,6 +50,11 @@ CheapAirport = true
 # Default: false
 AllowRacesWithAllVehicles = false
 
+# Will move the location of the Liberty City marker closer to the map so the flight is not as long and boring.
+# (From ~1min down to 20s flight time)
+# Default: false
+CloserLibertyCityFlight = false
+
 # Disables the ability to play replays
 # (Replays can cause crashes in some scenarios with certain effects)
 # Default: false

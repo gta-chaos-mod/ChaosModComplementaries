@@ -1,5 +1,6 @@
 #pragma once
 
+#include "missions/Missions.h"
 #include "util/Config.h"
 #include "util/GlobalHooksInstance.h"
 #include "util/hooks/HookMacros.h"
@@ -61,9 +62,9 @@ public:
         if (Config::GetOrDefault ("Fixes.SkipGangTerritoriesCheck", false))
         {
             // Overwrite gang territories check for the finale of the game
-            HOOK_METHOD_ARGS (globalHooksInstance.Get (),
-                              Hooked_Finale_GetGangTerritories,
-                              void (CRunningScript *, __int16), 0x4759B0);
+            HOOK_METHOD (globalHooksInstance.Get (),
+                         Hooked_Finale_GetGangTerritories,
+                         void (CRunningScript *, __int16), 0x4759B0);
         }
 
         if (Config::GetOrDefault ("Fixes.DisableReplays", false))
@@ -112,6 +113,8 @@ public:
                               unsigned __int16 (CRunningScript *, char),
                               0x48ABC6);
         }
+
+        Missions::Initialise ();
 
         initialised = true;
     }
@@ -174,8 +177,7 @@ public:
     }
 
     static void
-    Hooked_Finale_GetGangTerritories (auto &&cb, CRunningScript *script,
-                                      __int16 count)
+    Hooked_Finale_GetGangTerritories (auto &&cb)
     {
         CTheScripts::ScriptParams[0].iParam
             = std::max (35, CTheScripts::ScriptParams[0].iParam);
