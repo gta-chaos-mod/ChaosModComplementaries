@@ -2,7 +2,7 @@
 
 #include <plugin.h>
 
-#define VERSION 1.0
+#define VERSION 1.1
 
 using namespace plugin;
 
