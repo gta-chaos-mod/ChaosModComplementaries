@@ -128,7 +128,7 @@ public:
     static void
     HandleCheapAirport ()
     {
-        if (!Config::GetOrDefault ("Fixes.CheapAirstrip", true)) return;
+        if (!Config::GetOrDefault ("Fixes.CheapAirport", true)) return;
 
         for (int i = 0; i < MAX_NUM_PICKUPS; i++)
         {
