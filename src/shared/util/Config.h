@@ -55,6 +55,14 @@ AllowRacesWithAllVehicles = false
 # Default: false
 CloserLibertyCityFlight = false
 
+# Will allow you to start time-based missions at any time
+# Default: false
+DisableMissionTimeChecks = false
+
+# Removes barriers to other islands and unlocks them right from the start
+# Default: false
+RemoveBarriers = true
+
 # Disables the ability to play replays
 # (Replays can cause crashes in some scenarios with certain effects)
 # Default: false

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RemoveBarriers.h"
 #include "missions/Missions.h"
 #include "util/Config.h"
 #include "util/GlobalHooksInstance.h"
@@ -114,6 +115,13 @@ public:
                               0x48ABC6);
         }
 
+        if (Config::GetOrDefault ("Fixes.DisableMissionTimeChecks", true))
+        {
+            HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+                              Hooked_DisableMissionTimeChecks,
+                              void (CRunningScript *, __int16), 0x46821E);
+        }
+
         Missions::Initialise ();
 
         initialised = true;
@@ -126,6 +134,8 @@ public:
         HandleNoCheatInput ();
         HandleSkipWastedBustedHelpMessages ();
         HandleCheapAirport ();
+
+        RemoveBarriers::Process ();
     }
 
     static void
@@ -226,5 +236,24 @@ public:
             flag = 1;
 
         return cb ();
+    }
+
+    static void
+    Hooked_DisableMissionTimeChecks (auto &&cb, CRunningScript *thisScript,
+                                     __int16 count)
+    {
+        std::string missionName (thisScript->m_szName);
+
+        std::map<std::string, int> hourMaps
+            = {{"sweet", 9}, {"ryder", 12},  {"strap", 22}, {"wuzi", 20},
+               {"synd", 20}, {"desert", 20}, {"heist", 20}, {"oddveh", 7}};
+
+        int hour = hourMaps.contains (missionName)
+                       ? hourMaps[missionName]
+                       : CTheScripts::ScriptParams[0].iParam;
+
+        CTheScripts::ScriptParams[0].iParam = hour;
+
+        cb ();
     }
 };
