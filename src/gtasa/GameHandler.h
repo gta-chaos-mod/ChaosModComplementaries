@@ -11,6 +11,7 @@
 #include <CAnimManager.h>
 #include <CCamera.h>
 #include <CCheat.h>
+#include <CMenuManager.h>
 #include <CPickups.h>
 #include <CReferences.h>
 #include <CStats.h>
@@ -29,7 +30,8 @@ GetGlobalVariable (uint32_t index)
 
 class GameHandler
 {
-    static inline bool initialised = false;
+    static inline bool initialised      = false;
+    static inline int  lastConfigReload = 0;
 
 public:
     static void
@@ -130,12 +132,35 @@ public:
     static void
     ProcessGame ()
     {
+        HandleConfigReload ();
+
         HandleCheatWarning ();
         HandleNoCheatInput ();
         HandleSkipWastedBustedHelpMessages ();
         HandleCheapAirport ();
 
         RemoveBarriers::Process ();
+    }
+
+private:
+    static void
+    HandleConfigReload ()
+    {
+        // F7 + C
+        if (KeyPressed (VK_F7) && KeyPressed (67))
+        {
+            int currentTime
+                = std::max (CTimer::m_snTimeInMillisecondsNonClipped,
+                            (unsigned int) lastConfigReload);
+
+            if (FrontEndMenuManager.m_bMenuActive
+                && lastConfigReload <= currentTime)
+            {
+                lastConfigReload = currentTime + 3000;
+
+                Config::Init ();
+            }
+        }
     }
 
     static void
