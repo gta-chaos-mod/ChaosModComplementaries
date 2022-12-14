@@ -32,3 +32,5 @@ It currently has options to:
 - **Disable** the on-screen blur that happens when you drive fast
 - **Allow** story races ("High Stakes, Low-Rider", "Wu Zi Mu" and "Farewell, My Love...") with **all** vehicle classes
 - **Make the airport in the Desert super cheap** (Only $5)
+- **Unlock** all cities and **prevent** the player from getting wanted levels in them
+- **Remove** the barriers to and from the other islands
