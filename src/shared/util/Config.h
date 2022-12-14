@@ -6,6 +6,8 @@
 
 #include <plugin.h>
 
+#define CONFIG(_setting, _default) Config::GetOrDefault (_setting, _default)
+
 class Config
 {
 private:
