@@ -21,8 +21,7 @@ private:
     void
     CloserLibertyCityFlight ()
     {
-        if (!Config::GetOrDefault ("Fixes.CloserLibertyCityFlight", false))
-            return;
+        if (!CONFIG ("Fixes.CloserLibertyCityFlight", false)) return;
 
         HOOK_METHOD_ARGS (globalHooksInstance.Get (),
                           Hooked_CloserLibertyCityFlight_Checkpoint,

@@ -44,7 +44,7 @@ public:
         Events::gameProcessEvent.after += ProcessGame;
 
         // Disable Interior Music
-        if (Config::GetOrDefault ("Fixes.DisableInteriorMusic", true))
+        if (CONFIG ("Fixes.DisableInteriorMusic", true))
         {
             // Spheres
             patch::Nop (0x50844A, 6);
@@ -55,14 +55,14 @@ public:
             patch::Nop (0x508817, 6);
         }
 
-        if (Config::GetOrDefault ("Fixes.RemoveFrameDelay", true))
+        if (CONFIG ("Fixes.RemoveFrameDelay", true))
         {
             // Fix frame delay so the game runs at proper 30 FPS and not 30 - 5
             // / "25 FPS"
             injector::WriteMemory<byte> (0x53E94C, 0, true);
         }
 
-        if (Config::GetOrDefault ("Fixes.SkipGangTerritoriesCheck", false))
+        if (CONFIG ("Fixes.SkipGangTerritoriesCheck", false))
         {
             // Overwrite gang territories check for the finale of the game
             HOOK_METHOD (globalHooksInstance.Get (),
@@ -70,18 +70,18 @@ public:
                          void (CRunningScript *, __int16), 0x4759B0);
         }
 
-        if (Config::GetOrDefault ("Fixes.DisableReplays", false))
+        if (CONFIG ("Fixes.DisableReplays", false))
         {
             patch::Nop (0x53C090, 5);
         }
 
-        if (Config::GetOrDefault ("Fixes.DisableBlur", false))
+        if (CONFIG ("Fixes.DisableBlur", false))
         {
             HOOK (globalHooksInstance.Get (), Hooked_DrawBlur, void (float),
                   0x704E8A);
         }
 
-        if (Config::GetOrDefault ("Fixes.PreventLosingWeapons", true))
+        if (CONFIG ("Fixes.PreventLosingWeapons", true))
         {
             for (int address : {0x442E16 + 1, 0x4431CF + 1})
             {
@@ -102,7 +102,7 @@ public:
         HOOK_ARGS (globalHooksInstance.Get (), Hooked_OpCodeGetStatValue,
                    double (int), 0x49444E);
 
-        if (Config::GetOrDefault ("Fixes.AllowRacesWithAllVehicles", false))
+        if (CONFIG ("Fixes.AllowRacesWithAllVehicles", false))
         {
             // Override Lowrider and Street Racer checks
             HOOK_METHOD_ARGS (globalHooksInstance.Get (),
@@ -117,7 +117,7 @@ public:
                               0x48ABC6);
         }
 
-        if (Config::GetOrDefault ("Fixes.DisableMissionTimeChecks", true))
+        if (CONFIG ("Fixes.DisableMissionTimeChecks", true))
         {
             HOOK_METHOD_ARGS (globalHooksInstance.Get (),
                               Hooked_DisableMissionTimeChecks,
@@ -166,7 +166,7 @@ private:
     static void
     HandleCheapAirport ()
     {
-        if (!Config::GetOrDefault ("Fixes.CheapAirport", true)) return;
+        if (!CONFIG ("Fixes.CheapAirport", true)) return;
 
         for (int i = 0; i < MAX_NUM_PICKUPS; i++)
         {
@@ -183,7 +183,7 @@ private:
     static void
     HandleCheatWarning ()
     {
-        if (!Config::GetOrDefault ("Fixes.DisableCheatWarning", true)) return;
+        if (!CONFIG ("Fixes.DisableCheatWarning", true)) return;
 
         // Make sure the player never cheated
         CCheat::m_bHasPlayerCheated = false;
@@ -193,8 +193,7 @@ private:
     static void
     HandleNoCheatInput ()
     {
-        if (!Config::GetOrDefault ("Fixes.DisableCheatInput", false)
-            || KeyPressed (VK_SHIFT))
+        if (!CONFIG ("Fixes.DisableCheatInput", false) || KeyPressed (VK_SHIFT))
             return;
 
         CCheat::m_CheatString[0] = 0;
@@ -203,8 +202,7 @@ private:
     static void
     HandleSkipWastedBustedHelpMessages ()
     {
-        if (!Config::GetOrDefault ("Fixes.SkipWastedBustedMessages", false))
-            return;
+        if (!CONFIG ("Fixes.SkipWastedBustedMessages", false)) return;
 
         CPickups::RemovePickUp (GetGlobalVariable<int> (669));
         CPickups::RemovePickUp (GetGlobalVariable<int> (670));
@@ -230,13 +228,12 @@ private:
     {
         double stat = cb ();
 
-        if (statID == STAT_FAT
-            && Config::GetOrDefault ("Fixes.SkipFatCheck", false))
+        if (statID == STAT_FAT && CONFIG ("Fixes.SkipFatCheck", false))
         {
             stat = std::min (stat, 600.0);
         }
         else if (statID == STAT_LUNG_CAPACITY
-                 && Config::GetOrDefault ("Fixes.SkipLungCapacityCheck", false))
+                 && CONFIG ("Fixes.SkipLungCapacityCheck", false))
         {
             stat = std::max (51.0, stat);
         }
