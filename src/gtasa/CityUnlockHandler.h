@@ -9,7 +9,7 @@
 using namespace plugin;
 
 // Thanks to zolika for the find and help on this!
-class RemoveBarriers
+class CityUnlockHandler
 {
     static bool
     IsIPLEnabled (char *name)
@@ -81,20 +81,38 @@ public:
     static void
     Process ()
     {
-        if (!Config::GetOrDefault ("Fixes.RemoveBarriers", false)) return;
+        UnlockCities ();
+        RemoveBarriers ();
+    }
+
+    static void
+    UnlockCities ()
+    {
+        if (!CONFIG ("Fixes.UnlockCities", false)) return;
 
         int citiesUnlocked = CStats::GetStatValue (181);
         if (citiesUnlocked != 3)
         {
             CStats::SetStatValue (181, 3);
-
-            if (IsIPLEnabled ((char *) "BARRIERS1"))
-                Command<eScriptCommands::COMMAND_REMOVE_IPL> ("BARRIERS1");
-
-            if (IsIPLEnabled ((char *) "BARRIERS2"))
-                Command<eScriptCommands::COMMAND_REMOVE_IPL> ("BARRIERS2");
-
-            EnableRoads ();
         }
+    }
+
+    static void
+    RemoveBarriers ()
+    {
+        if (!CONFIG ("Fixes.RemoveBarriers", true)) return;
+
+        bool barriers1Enabled = IsIPLEnabled ((char *) "BARRIERS1");
+        bool barriers2Enabled = IsIPLEnabled ((char *) "BARRIERS2");
+
+        if (!barriers1Enabled && !barriers2Enabled) return;
+
+        if (barriers1Enabled)
+            Command<eScriptCommands::COMMAND_REMOVE_IPL> ("BARRIERS1");
+
+        if (barriers2Enabled)
+            Command<eScriptCommands::COMMAND_REMOVE_IPL> ("BARRIERS2");
+
+        EnableRoads ();
     }
 };

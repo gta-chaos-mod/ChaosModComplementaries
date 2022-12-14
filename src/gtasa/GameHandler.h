@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RemoveBarriers.h"
+#include "CityUnlockHandler.h"
 #include "missions/Missions.h"
 #include "util/Config.h"
 #include "util/GlobalHooksInstance.h"
@@ -139,7 +139,7 @@ public:
         HandleSkipWastedBustedHelpMessages ();
         HandleCheapAirport ();
 
-        RemoveBarriers::Process ();
+        CityUnlockHandler::Process ();
     }
 
 private:

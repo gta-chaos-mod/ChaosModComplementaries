@@ -61,8 +61,12 @@ CloserLibertyCityFlight = false
 # Default: false
 DisableMissionTimeChecks = false
 
-# Removes barriers to other islands and unlocks them right from the start
+# Unlocks other cities so you can won't get wanted levels when you enter them
 # Default: false
+UnlockCities = true
+
+# Removes barriers to other islands
+# Default: true
 RemoveBarriers = true
 
 # Disables the ability to play replays
