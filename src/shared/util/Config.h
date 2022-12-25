@@ -103,40 +103,39 @@ DisableCheatInput = false
 #endif
 
 public:
-    static void
-    Init ()
+    static std::string
+    GetConfigFilename ()
     {
         const std::string pluginFilename = std::string (PLUGIN_FILENAME);
         const std::string configFilename
-            = "/" + pluginFilename.substr (0, pluginFilename.size () - 4)
-              + ".toml";
-        const std::filesystem::path config_path
+            = pluginFilename.substr (0, pluginFilename.size () - 4) + ".toml";
+
+        return configFilename;
+    }
+
+    static std::filesystem::path
+    GetConfigPath ()
+    {
+        const std::string configFilename = GetConfigFilename ();
+
+        const std::filesystem::path configPath
             = PLUGIN_PATH ((char *) configFilename.c_str ());
 
-        std::filesystem::create_directories (config_path.parent_path ());
+        std::filesystem::create_directories (configPath.parent_path ());
 
-        if (!std::filesystem::exists (config_path))
-        {
-            // Write default configuration file
-            std::ofstream ConfigFile (config_path);
-
-            ConfigFile << configContent;
-
-            ConfigFile.close ();
-        }
-
-        if (std::filesystem::exists (config_path))
-        {
-            config = cpptoml::parse_file (config_path.string ());
-        }
+        return configPath;
     }
+
+    static void Init ();
+
+    static void ReloadConfig ();
 
     template <class T>
     static T
-    GetOrDefault (std::string key, T default_val)
+    GetOrDefault (std::string key, T defaultValue)
     {
-        if (!config) return default_val;
+        if (!config) return defaultValue;
 
-        return config->get_qualified_as<T> (key).value_or (default_val);
+        return config->get_qualified_as<T> (key).value_or (defaultValue);
     }
 };

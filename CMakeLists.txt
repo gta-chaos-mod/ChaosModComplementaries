@@ -20,3 +20,4 @@ include(cmake/gtaVC.cmake)
 include(cmake/gtaSA.cmake)
 
 include(cmake/minhook.cmake)
+include(cmake/efsw.cmake)

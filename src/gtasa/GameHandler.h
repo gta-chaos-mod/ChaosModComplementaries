@@ -30,16 +30,13 @@ GetGlobalVariable (uint32_t index)
 
 class GameHandler
 {
-    static inline bool initialised      = false;
-    static inline int  lastConfigReload = 0;
+    static inline bool initialised = false;
 
 public:
     static void
     Initialise ()
     {
         if (initialised) return;
-
-        Config::Init ();
 
         Events::gameProcessEvent.after += ProcessGame;
 
@@ -132,8 +129,6 @@ public:
     static void
     ProcessGame ()
     {
-        HandleConfigReload ();
-
         HandleCheatWarning ();
         HandleNoCheatInput ();
         HandleSkipWastedBustedHelpMessages ();
@@ -143,26 +138,6 @@ public:
     }
 
 private:
-    static void
-    HandleConfigReload ()
-    {
-        // F7 + C
-        if (KeyPressed (VK_F7) && KeyPressed (67))
-        {
-            int currentTime
-                = std::max (CTimer::m_snTimeInMillisecondsNonClipped,
-                            (unsigned int) lastConfigReload);
-
-            if (FrontEndMenuManager.m_bMenuActive
-                && lastConfigReload <= currentTime)
-            {
-                lastConfigReload = currentTime + 3000;
-
-                Config::Init ();
-            }
-        }
-    }
-
     static void
     HandleCheapAirport ()
     {

@@ -1,4 +1,5 @@
 #include "GameHandler.h"
+#include "util/Config.h"
 
 #include <plugin.h>
 
@@ -11,6 +12,8 @@ class ChaosModComplementaries
 public:
     ChaosModComplementaries ()
     {
+        Config::Init ();
+
         Events::initRwEvent += GameHandler::Initialise;
     }
 } chaosModComplementaries;
