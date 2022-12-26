@@ -21,8 +21,7 @@ It currently has options to:
 - **Disable** music in interiors **and** some areas (e.g. the Lowrider meetup or dance party during Life's a Beach)
 - **Disable replays**
 - **Disable** the weird **frame delay when the frame limiter is enabled** (14ms every frame, effectively causing the game to be in "25 FPS")
-- **Skip** the **Lung Capacity stat check** for the mission **"Amphibious Assault"**
-- **Skip** the **Fat stat check** for the missions **"Black Project"** and **"Green Goo"**
+- **Skip** various stat related checks for missions and sub-missions (check the config for more info)
 - **Skip** the **Gang Territories check** for the final mission **"End of the Line"**
 - **Disable** the **cheat warning** that pops up when you have cheated and try to save your game
 - **Disable** the **input of cheats** unless the **Shift Key** is being held down

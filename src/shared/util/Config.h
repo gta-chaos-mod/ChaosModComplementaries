@@ -26,7 +26,7 @@ private:
 # Default: false
 PreventLosingWeapons = false
 
-# Skips the help messages that appear the first time you get wasted or busted.
+# Skips the help messages that appear the first time you get wasted or busted
 # It removes the pickups so the messages won't appear in the first place
 # Default: false
 SkipWastedBustedMessages = false
@@ -35,13 +35,13 @@ SkipWastedBustedMessages = false
 # Default: false
 SkipGangTerritoriesCheck = false
 
-# Whether to skip the fat stat check for missions like Black Project and Green Goo
+# Whether to skip various stat checks found in the game, such as:
+# - The fat check for Black Project and Green Goo
+# - The lung capacity check for Amphibious Assault
+# - The driving skill checks for 8-Track and Blood Bowl
+# - The cycling and stamina skill checks for the Mount Chiliad challenge and Beat The Cock
 # Default: false
-SkipFatCheck = false
-
-# Whether to skip the lung capacity stat check for Amphibious Assault
-# Default: false
-SkipLungCapacityCheck = false
+SkipStatChecks = false
 
 # Will set the price of the airport to $5 so it can still be bought when very low on money
 # Default: true
@@ -52,14 +52,14 @@ CheapAirport = true
 # Default: false
 AllowRacesWithAllVehicles = false
 
-# Will move the location of the Liberty City marker closer to the map so the flight is not as long and boring.
+# Will move the location of the Liberty City marker closer to the map so the flight is not as long and boring
 # (From ~1min down to 20s flight time)
-# Default: false
-CloserLibertyCityFlight = false
+# Default: true
+CloserLibertyCityFlight = true
 
 # Will allow you to start time-based missions at any time
-# Default: false
-DisableMissionTimeChecks = false
+# Default: true
+DisableMissionTimeChecks = true
 
 # Unlocks other cities so you can won't get wanted levels when you enter them
 # Default: false
@@ -91,9 +91,9 @@ DisableBlur = false
 # Default: true
 DisableCheatWarning = true
 
-# Disables input of cheats so no accidental cheats can be input.
-# This will COMPLETELY disable cheat input - not just accidental hash collisions.
-# Cheats can still be input when holding SHIFT.
+# Disables input of cheats so no accidental cheats can be input
+# This will COMPLETELY disable cheat input - not just accidental hash collisions
+# Cheats can still be input when holding SHIFT
 # Default: false
 DisableCheatInput = false
 

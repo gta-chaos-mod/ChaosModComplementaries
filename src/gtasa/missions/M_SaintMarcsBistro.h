@@ -21,8 +21,6 @@ private:
     void
     CloserLibertyCityFlight ()
     {
-        if (!CONFIG ("Fixes.CloserLibertyCityFlight", false)) return;
-
         HOOK_METHOD_ARGS (globalHooksInstance.Get (),
                           Hooked_CloserLibertyCityFlight_Checkpoint,
                           void (CRunningScript *, __int16), 0x47CF52);
@@ -47,6 +45,8 @@ private:
     {
         cb ();
 
+        if (!CONFIG ("Fixes.CloserLibertyCityFlight", true)) return;
+
         if (std::string (thisScript->m_szName) == "casin10")
         {
             if (CTheScripts::ScriptParams[0].fParam == 7500.0f)
@@ -63,6 +63,8 @@ private:
                                                    __int16         count)
     {
         cb ();
+
+        if (!CONFIG ("Fixes.CloserLibertyCityFlight", true)) return;
 
         if (std::string (thisScript->m_szName) == "casin10"
             && CTheScripts::ScriptParams[0].iParam == 519)
@@ -82,6 +84,8 @@ private:
     {
         cb ();
 
+        if (!CONFIG ("Fixes.CloserLibertyCityFlight", true)) return;
+
         if (std::string (thisScript->m_szName) == "casin10")
         {
             if (CTheScripts::ScriptParams[1].fParam == 7500.0f)
@@ -98,6 +102,8 @@ private:
                                                     __int16         count)
     {
         cb ();
+
+        if (!CONFIG ("Fixes.CloserLibertyCityFlight", true)) return;
 
         if (std::string (thisScript->m_szName) == "casin10")
         {
