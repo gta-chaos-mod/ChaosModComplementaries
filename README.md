@@ -18,8 +18,7 @@ The mod currently has no options for GTA Vice City.
 
 ## GTA San Andreas
 It currently has options to:
-- **Skip** the tutorials for the hospital and police station by removing their info pickups
-- **Disable music in interiors**
+- **Disable** music in interiors **and** some areas (e.g. the Lowrider meetup or dance party during Life's a Beach)
 - **Disable replays**
 - **Disable** the weird **frame delay when the frame limiter is enabled** (14ms every frame, effectively causing the game to be in "25 FPS")
 - **Skip** the **Lung Capacity stat check** for the mission **"Amphibious Assault"**
