@@ -294,6 +294,10 @@ private:
         {
             stat = std::max (200.0, stat);
         }
+        else if (statID == STAT_BIKE_SKILL)
+        {
+            stat = std::max (200.0, stat);
+        }
         else if (statID == STAT_CYCLING_SKILL)
         {
             stat = std::max (500.0, stat);
