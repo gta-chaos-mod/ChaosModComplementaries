@@ -2,7 +2,9 @@
 
 #include "util/Config.h"
 
+#ifdef GTASA
 #include <CAudioEngine.h>
+#endif
 #include <efsw/efsw.hpp>
 
 class FileUpdateListener : public efsw::FileWatchListener
