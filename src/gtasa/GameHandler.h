@@ -346,8 +346,8 @@ private:
         std::string missionName (thisScript->m_szName);
 
         std::map<std::string, int> hourMaps
-            = {{"sweet", 9}, {"ryder", 12},  {"strap", 22}, {"wuzi", 20},
-               {"synd", 20}, {"desert", 20}, {"heist", 20}, {"oddveh", 7}};
+            = {{"sweet", 10}, {"ryder", 13},  {"strap", 23}, {"wuzi", 21},
+               {"synd", 21},  {"desert", 21}, {"heist", 21}, {"oddveh", 8}};
 
         int hour = hourMaps.contains (missionName)
                        ? hourMaps[missionName]
