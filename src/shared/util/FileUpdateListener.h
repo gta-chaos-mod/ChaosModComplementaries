@@ -2,6 +2,7 @@
 
 #include "util/Config.h"
 
+#include <CAudioEngine.h>
 #include <efsw/efsw.hpp>
 
 class FileUpdateListener : public efsw::FileWatchListener
@@ -16,5 +17,10 @@ public:
         if (filename != Config::GetConfigFilename ()) return;
 
         Config::ReloadConfig ();
+
+#ifdef GTASA
+        AudioEngine.ReportFrontendAudioEvent (AE_FRONTEND_DISPLAY_INFO, 0.0f,
+                                              1.0f);
+#endif
     }
 };
