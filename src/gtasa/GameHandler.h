@@ -8,6 +8,7 @@
 
 #include <thread>
 
+#include <CAEAudioHardware.h>
 #include <CAnimManager.h>
 #include <CCamera.h>
 #include <CCheat.h>
@@ -118,6 +119,12 @@ public:
         // TODO: Option to disable music during dance and lowrider minigame
         // We will probably have to set the SFX volume to 0.
         // Alternatively, changing the pointer to our own variable
+
+        // Mute lowrider and dancing minigame music as well as some cutscene
+        // music
+        HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+                          Hooked_CutsceneTrackManager_SetFrequencyScalingFactor,
+                          int (CAEAudioHardware *, int, int, float), 0x4DBF9B);
 
         // Overwrite "GetStatValue" OpCode for mission checks
         HOOK_ARGS (globalHooksInstance.Get (), Hooked_OpCodeGetStatValue,
@@ -273,6 +280,22 @@ private:
         if (CONFIG ("Fixes.DisableBlur", false)) return;
 
         cb ();
+    }
+
+    static int
+    Hooked_CutsceneTrackManager_SetFrequencyScalingFactor (
+        auto &&cb, CAEAudioHardware *thisAudioHardware, int slot, int offset,
+        float &factor)
+    {
+        int result = cb ();
+
+        if (!CONFIG ("Fixes.DisableMinigameAndCutsceneMusic", false))
+            return result;
+
+        if (factor > 0.0f)
+            thisAudioHardware->m_afChannelVolumes[slot + offset] = -100.0f;
+
+        return result;
     }
 
     static double

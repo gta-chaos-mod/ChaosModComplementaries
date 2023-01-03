@@ -79,6 +79,11 @@ DisableReplays = false
 # Default: false
 DisableInteriorMusic = false
 
+# Disables the minigame music during the lowrider and dancing minigames (Maybe also others)
+# Also disables certain cutscene music as they apparently share the same method
+# Default: false
+DisableMinigameAndCutsceneMusic = false
+
 # Remove the 14ms frame delay to make the game run in proper 30 FPS instead of 30 FPS - 5 / "25 FPS"
 # Default: true
 RemoveFrameDelay = true
