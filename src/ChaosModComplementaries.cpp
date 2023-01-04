@@ -5,6 +5,8 @@
 
 #define VERSION 1.3.5
 
+using namespace plugin;
+
 class ChaosModComplementaries
 {
 public:
@@ -12,6 +14,6 @@ public:
     {
         Config::Init ();
 
-        GameHandler::Initialise ();
+        Events::initRwEvent += GameHandler::Initialise;
     }
 } chaosModComplementaries;
