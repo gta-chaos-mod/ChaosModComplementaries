@@ -113,7 +113,8 @@ public:
         for (int address : {0x442E16 + 1, 0x4431CF + 1})
         {
             injector::WriteMemory<bool *> (address,
-                                           &loseWeaponsAfterDeathOrBusted);
+                                           &loseWeaponsAfterDeathOrBusted,
+                                           true);
         }
 
         // TODO: Option to disable music during dance and lowrider minigame
@@ -168,7 +169,7 @@ private:
     UpdateConfigValues ()
     {
         loseWeaponsAfterDeathOrBusted
-            = CONFIG ("Fixes.PreventLosingWeapons", true);
+            = !CONFIG ("Fixes.PreventLosingWeapons", false);
 
         UpdateFrameDelay (CONFIG ("Fixes.RemoveFrameDelay", true));
         UpdateDisableReplays (CONFIG ("Fixes.DisableReplays", false));
