@@ -171,34 +171,33 @@ private:
         loseWeaponsAfterDeathOrBusted
             = !CONFIG ("Fixes.PreventLosingWeapons", false);
 
-        UpdateFrameDelay (CONFIG ("Fixes.RemoveFrameDelay", true));
-        UpdateDisableReplays (CONFIG ("Fixes.DisableReplays", false));
-        UpdateDisableInteriorMusic (
-            CONFIG ("Fixes.DisableInteriorMusic", false));
+        UpdateFrameDelay ();
+        UpdateDisableReplays ();
+        UpdateDisableInteriorMusic ();
     }
 
     static void
-    UpdateFrameDelay (bool enabled = true)
+    UpdateFrameDelay ()
     {
-        if (enabled)
+        if (CONFIG ("Fixes.RemoveFrameDelay", true))
             AddressWriter<0x53E94C, byte>::apply (0);
         else
             AddressWriter<0x53E94C, byte>::restore ();
     }
 
     static void
-    UpdateDisableReplays (bool enabled = true)
+    UpdateDisableReplays ()
     {
-        if (enabled)
+        if (CONFIG ("Fixes.DisableReplays", false))
             AddressNopper<0x53C090, 5>::apply ();
         else
             AddressNopper<0x53C090, 5>::restore ();
     }
 
     static void
-    UpdateDisableInteriorMusic (bool enabled = true)
+    UpdateDisableInteriorMusic ()
     {
-        if (enabled)
+        if (CONFIG ("Fixes.DisableInteriorMusic", false))
         {
             AddressNopper<0x50844A, 6>::apply ();
             AddressNopper<0x5084B0, 6>::apply ();
@@ -238,7 +237,7 @@ private:
 
         // Make sure the player never cheated
         CCheat::m_bHasPlayerCheated = false;
-        CStats::SetStatValue (eStats::STAT_TIMES_CHEATED, 0.0);
+        CStats::SetStatValue (eStats::STAT_TIMES_CHEATED, 0.0f);
     }
 
     static void
@@ -263,14 +262,11 @@ private:
     static void
     Hooked_Finale_GetGangTerritories (auto &&cb)
     {
-        if (!CONFIG ("Fixes.SkipGangTerritoriesCheck", false))
+        if (CONFIG ("Fixes.SkipGangTerritoriesCheck", false))
         {
-            cb ();
-            return;
+            CTheScripts::ScriptParams[0].iParam
+                = std::max (35, CTheScripts::ScriptParams[0].iParam);
         }
-
-        CTheScripts::ScriptParams[0].iParam
-            = std::max (35, CTheScripts::ScriptParams[0].iParam);
 
         cb ();
     }
@@ -361,23 +357,20 @@ private:
     Hooked_DisableMissionTimeChecks (auto &&cb, CRunningScript *thisScript,
                                      __int16 count)
     {
-        if (!CONFIG ("Fixes.DisableMissionTimeChecks", true))
+        if (CONFIG ("Fixes.DisableMissionTimeChecks", true))
         {
-            cb ();
-            return;
+            std::string missionName (thisScript->m_szName);
+
+            std::map<std::string, int> hourMaps
+                = {{"sweet", 10}, {"ryder", 13},  {"strap", 23}, {"wuzi", 21},
+                   {"synd", 21},  {"desert", 21}, {"heist", 21}, {"oddveh", 8}};
+
+            int hour = hourMaps.contains (missionName)
+                           ? hourMaps[missionName]
+                           : CTheScripts::ScriptParams[0].iParam;
+
+            CTheScripts::ScriptParams[0].iParam = hour;
         }
-
-        std::string missionName (thisScript->m_szName);
-
-        std::map<std::string, int> hourMaps
-            = {{"sweet", 10}, {"ryder", 13},  {"strap", 23}, {"wuzi", 21},
-               {"synd", 21},  {"desert", 21}, {"heist", 21}, {"oddveh", 8}};
-
-        int hour = hourMaps.contains (missionName)
-                       ? hourMaps[missionName]
-                       : CTheScripts::ScriptParams[0].iParam;
-
-        CTheScripts::ScriptParams[0].iParam = hour;
 
         cb ();
     }
