@@ -21,19 +21,19 @@ private:
     void
     CloserLibertyCityFlight ()
     {
-        HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
                           Hooked_CloserLibertyCityFlight_Checkpoint,
                           void (CRunningScript *, __int16), 0x47CF52);
 
-        HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
                           Hooked_CloserLibertyCityFlight_CreateShamal_1,
                           void (CRunningScript *, __int16), 0x467AB7);
 
-        HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
                           Hooked_CloserLibertyCityFlight_CreateShamal_2,
                           void (CRunningScript *, __int16), 0x467DB9);
 
-        HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
                           Hooked_CloserLibertyCityFlight_CheckpointCheck,
                           void (CRunningScript *, __int16), 0x486DB1);
     }

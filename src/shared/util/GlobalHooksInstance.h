@@ -1,22 +1,14 @@
 #pragma once
 
-#include "util/CleanupHandler.h"
 #include "util/hooks/HookMacros.h"
 
 class GlobalHooksInstance
 {
-    CleanupHandler cleanupHandler;
-
 public:
-    auto
+    static auto
     Get ()
     {
-        return this;
+        static GlobalHooksInstance instance;
+        return &instance;
     }
-
-    auto &
-    GetCleanupHandler ()
-    {
-        return cleanupHandler;
-    }
-} globalHooksInstance;
+};

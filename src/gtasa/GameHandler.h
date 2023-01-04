@@ -101,12 +101,12 @@ public:
         Events::gameProcessEvent.after += ProcessGame;
 
         // Overwrite gang territories check for the finale of the game
-        HOOK_METHOD (globalHooksInstance.Get (),
+        HOOK_METHOD (GlobalHooksInstance::Get (),
                      Hooked_Finale_GetGangTerritories,
                      void (CRunningScript *, __int16), 0x4759B0);
 
         // Disable Blur
-        HOOK (globalHooksInstance.Get (), Hooked_DrawBlur, void (float),
+        HOOK (GlobalHooksInstance::Get (), Hooked_DrawBlur, void (float),
               0x704E8A);
 
         // Lose weapons after busted or wasted
@@ -122,26 +122,26 @@ public:
 
         // Mute lowrider and dancing minigame music as well as some cutscene
         // music
-        HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
                           Hooked_CutsceneTrackManager_SetFrequencyScalingFactor,
                           int (CAEAudioHardware *, int, int, float), 0x4DBF9B);
 
         // Overwrite "GetStatValue" OpCode for mission checks
-        HOOK_ARGS (globalHooksInstance.Get (), Hooked_OpCodeGetStatValue,
+        HOOK_ARGS (GlobalHooksInstance::Get (), Hooked_OpCodeGetStatValue,
                    double (int), 0x49444E);
 
         // Override Lowrider and Street Racer checks
-        HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
                           Hooked_IsLowRiderOrStreetRacer,
                           unsigned __int16 (CRunningScript *, char), 0x478528,
                           0x478575);
 
         // Override Cesar Race Badlands
-        HOOK_METHOD_ARGS (globalHooksInstance.Get (), Hooked_CesarRaceBadlands,
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (), Hooked_CesarRaceBadlands,
                           unsigned __int16 (CRunningScript *, char), 0x48ABC6);
 
         // Disable missino time checks
-        HOOK_METHOD_ARGS (globalHooksInstance.Get (),
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
                           Hooked_DisableMissionTimeChecks,
                           void (CRunningScript *, __int16), 0x46821E);
 

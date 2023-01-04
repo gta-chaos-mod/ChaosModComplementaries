@@ -59,8 +59,6 @@
 #define ADD_TO_HOOK(function, inst, name)                                      \
     {                                                                          \
         auto it = ADD_TO_HOOK_ (function, name);                               \
-        inst->GetCleanupHandler ().AddFunction (                               \
-            [it] { HOOK_CLASS (name)::Remove (it); });                         \
     }
 #define ENABLE_HOOK(inst, name) ADD_TO_HOOK (name, inst, name)
 
@@ -77,7 +75,7 @@
 #define HOOK_METHOD(inst, func, prototype, ...)                                \
     HOOK_ (inst, func, TYPE_METHOD, prototype, __VA_ARGS__)
 
-#define HOOK_STD(inst, func, prototype, ...)                                \
+#define HOOK_STD(inst, func, prototype, ...)                                   \
     HOOK_ (inst, func, TYPE_STD, prototype, __VA_ARGS__)
 
 // Hook with arguments support
