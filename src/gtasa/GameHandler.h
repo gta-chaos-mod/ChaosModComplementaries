@@ -141,7 +141,7 @@ public:
         HOOK_METHOD_ARGS (GlobalHooksInstance::Get (), Hooked_CesarRaceBadlands,
                           unsigned __int16 (CRunningScript *, char), 0x48ABC6);
 
-        // Disable missino time checks
+        // Disable mission time checks
         HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
                           Hooked_DisableMissionTimeChecks,
                           void (CRunningScript *, __int16), 0x46821E);
