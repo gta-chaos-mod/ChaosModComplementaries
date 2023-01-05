@@ -2,6 +2,7 @@
 
 #include "CityUnlockHandler.h"
 #include "missions/Missions.h"
+#include "util/CAECutsceneTrackManager.h"
 #include "util/Config.h"
 #include "util/GlobalHooksInstance.h"
 #include "util/hooks/HookMacros.h"
@@ -288,6 +289,15 @@ private:
 
         if (!CONFIG ("Fixes.DisableMinigameAndCutsceneMusic", false))
             return result;
+
+        switch (AECutsceneTrackManager.m_nTrackId)
+        {
+            case 183: // Mission Passed Tune
+            case 184: // Driving School Completion
+                return result;
+
+            default: break;
+        }
 
         if (factor > 0.0f)
             thisAudioHardware->m_afChannelVolumes[slot + offset] = -100.0f;
