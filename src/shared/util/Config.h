@@ -64,7 +64,7 @@ DisableMissionTimeChecks = true
 
 # Unlocks other cities so you can won't get wanted levels when you enter them
 # Default: false
-UnlockCities = true
+UnlockCities = false
 
 # Removes barriers to other islands
 # Default: true
