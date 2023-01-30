@@ -14,15 +14,27 @@ jobs:
       with:
         arch: x86
 
-    - name: Compile
+    - name: Cache bin
+      id: cache-bin
+      uses: actions/cache@v3
+      with:
+        path: bin
+        key: ${{ runner.os }}-bin
+
+    - name: Create bin folder
+      if: steps.cache-bin.outputs.cache-hit != 'true'
       run: |
         mkdir bin
         cd bin
         cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ../
-        ninja
         mkdir output_III
         mkdir output_VC
         mkdir output_SA
+    
+    - name: Compile
+      run: |
+        cd bin
+        ninja
         cp ChaosModComplementaries.III.asi output_III/ChaosModComplementaries.III.asi
         cp ChaosModComplementaries.VC.asi output_VC/ChaosModComplementaries.VC.asi
         cp ChaosModComplementaries.SA.asi output_SA/ChaosModComplementaries.SA.asi
