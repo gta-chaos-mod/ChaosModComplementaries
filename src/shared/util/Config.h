@@ -109,6 +109,11 @@ DisableCheatInput = false
 # Default: false
 DisablePlayerVehicleDamagesUpsideDown = false
 
+# Ends the mission "Burning Desire" as soon as the marker infront of Denise's house is entered
+# This is to prevent a potential softlock when she dies or can't pathfind to the house
+# Default: true
+BurningDesireHomeSoftlock = true
+
 #######################################################)";
 #else
     inline static std::string configContent = "";

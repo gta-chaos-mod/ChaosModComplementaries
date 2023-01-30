@@ -100,6 +100,7 @@ public:
         if (initialised) return;
 
         Events::gameProcessEvent.after += ProcessGame;
+        Events::processScriptsEvent.after += ProcessScripts;
 
         // Overwrite gang territories check for the finale of the game
         HOOK_METHOD (GlobalHooksInstance::Get (),
@@ -172,7 +173,14 @@ public:
         HandleSkipWastedBustedHelpMessages ();
         HandleCheapAirport ();
 
+        Missions::ProcessGame ();
         CityUnlockHandler::Process ();
+    }
+
+    static void
+    ProcessScripts ()
+    {
+        Missions::ProcessScripts ();
     }
 
 private:
