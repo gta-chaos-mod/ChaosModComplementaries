@@ -147,6 +147,16 @@ public:
                           Hooked_DisableMissionTimeChecks,
                           void (CRunningScript *, __int16), 0x46821E);
 
+        // Remove CJ from a car that's about to be deleted
+        HOOK_ARGS (GlobalHooksInstance::Get (),
+                   Hooked_RemoveCJFromCarBeforeDeletion, void (CVehicle *),
+                   0x467B3C);
+
+        // Hook OPCodes 500-599
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
+                          Hooked_UpsideDownCarCheck_OpCode,
+                          char (CRunningScript *, int), 0x47E090);
+
         Missions::Initialise ();
 
         initialised = true;
@@ -175,6 +185,7 @@ private:
         UpdateFrameDelay ();
         UpdateDisableReplays ();
         UpdateDisableInteriorMusic ();
+        UpdatePlayerUpsideDownDamageProcessing ();
     }
 
     static void
@@ -193,6 +204,15 @@ private:
             AddressNopper<0x53C090, 5>::apply ();
         else
             AddressNopper<0x53C090, 5>::restore ();
+    }
+
+    static void
+    UpdatePlayerUpsideDownDamageProcessing ()
+    {
+        if (CONFIG ("Fixes.DisablePlayerVehicleDamagesUpsideDown", true))
+            AddressWriter<0x570DAF + 6, byte>::apply (255);
+        else
+            AddressWriter<0x570DAF + 6, byte>::restore ();
     }
 
     static void
@@ -383,5 +403,42 @@ private:
         }
 
         cb ();
+    }
+
+    static void
+    Hooked_RemoveCJFromCarBeforeDeletion (auto &&cb, CVehicle *vehicle)
+    {
+        for (int i = 0; i < vehicle->m_nMaxPassengers; i++)
+        {
+            CPed *ped = vehicle->m_apPassengers[i];
+
+            if (!ped || !ped->IsPlayer ()) continue;
+
+            Command<eScriptCommands::
+                        COMMAND_REMOVE_CHAR_FROM_CAR_MAINTAIN_POSITION> (
+                ped, vehicle);
+        }
+
+        cb ();
+    }
+
+    static char
+    Hooked_UpsideDownCarCheck_OpCode (auto &&cb, CRunningScript *script,
+                                      int opcode)
+    {
+        switch (opcode)
+        {
+            // IS_CAR_UPSIDEDOWN
+            case 500:
+            {
+                script->CollectParameters (1);
+                script->UpdateCompareFlag (false);
+                return 0;
+            }
+            default:
+            {
+                return cb ();
+            }
+        }
     }
 };

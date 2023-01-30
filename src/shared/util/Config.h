@@ -103,6 +103,12 @@ DisableCheatWarning = true
 # Default: false
 DisableCheatInput = false
 
+# Disables the player vehicle getting damaged when upside down
+# This makes it function like in GTA V for the player vehicle
+# Empty or NPC-driven cars will still get damaged and eventually catch fire
+# Default: false
+DisablePlayerVehicleDamagesUpsideDown = false
+
 #######################################################)";
 #else
     inline static std::string configContent = "";
