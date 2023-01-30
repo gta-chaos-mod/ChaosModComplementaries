@@ -154,9 +154,12 @@ public:
                    0x467B3C);
 
         // Hook OPCodes 500-599
-        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
-                          Hooked_UpsideDownCarCheck_OpCode,
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (), Hooked_OpCodes_500_599,
                           char (CRunningScript *, int), 0x47E090);
+
+        // Hook OPCodes 1100-1199
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (), Hooked_OpCodes_1100_1199,
+                          char (CRunningScript *, int), 0x48A320);
 
         Missions::Initialise ();
 
@@ -431,8 +434,7 @@ private:
     }
 
     static char
-    Hooked_UpsideDownCarCheck_OpCode (auto &&cb, CRunningScript *script,
-                                      int opcode)
+    Hooked_OpCodes_500_599 (auto &&cb, CRunningScript *script, int opcode)
     {
         switch (opcode)
         {
@@ -441,6 +443,43 @@ private:
             {
                 script->CollectParameters (1);
                 script->UpdateCompareFlag (false);
+                return 0;
+            }
+            default:
+            {
+                return cb ();
+            }
+        }
+    }
+
+    static bool
+    DoesPedHaveWeapon (CPed *ped, eWeaponType weapon)
+    {
+        return ped->DoWeHaveWeaponAvailable (weapon);
+    }
+
+    static char
+    Hooked_OpCodes_1100_1199 (auto &&cb, CRunningScript *script, int opcode)
+    {
+        switch (opcode)
+        {
+            // HAS_WEAPON
+            case 1169:
+            {
+                if (!CONFIG ("Fixes.DisableMissionWeaponChecks", true))
+                    return cb ();
+
+                script->CollectParameters (2);
+
+                CPed       *ped = (CPed *) CTheScripts::ScriptParams[0].pParam;
+                eWeaponType weapon
+                    = (eWeaponType) CTheScripts::ScriptParams[1].iParam;
+
+                bool hasWeapon = DoesPedHaveWeapon (ped, weapon);
+
+                if (weapon == WEAPON_SPRAYCAN) hasWeapon = true;
+
+                script->UpdateCompareFlag (hasWeapon);
                 return 0;
             }
             default:

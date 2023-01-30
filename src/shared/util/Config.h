@@ -114,6 +114,11 @@ DisablePlayerVehicleDamagesUpsideDown = false
 # Default: true
 BurningDesireHomeSoftlock = true
 
+# Disables "has player weapon" checks in specific missions so they don't immediately fail
+# For now this only overrides the check in Tagging Up Turf, as no other mission seems to fail
+# Default: true
+DisableMissionWeaponChecks = true
+
 #######################################################)";
 #else
     inline static std::string configContent = "";
