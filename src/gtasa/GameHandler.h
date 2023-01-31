@@ -153,6 +153,12 @@ public:
                    Hooked_RemoveCJFromCarBeforeDeletion, void (CVehicle *),
                    0x467B3C);
 
+        // Fix Drive-By mission flags not updating properly if player is too
+        // fast for the first marker
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (),
+                          Hooked_FixDriveBySpeedSoftlock,
+                          char *(CRunningScript *, int), 0x46665C);
+
         // Hook OPCodes 500-599
         HOOK_METHOD_ARGS (GlobalHooksInstance::Get (), Hooked_OpCodes_500_599,
                           char (CRunningScript *, int), 0x47E090);
@@ -431,6 +437,22 @@ private:
         }
 
         cb ();
+    }
+
+    static char *
+    Hooked_FixDriveBySpeedSoftlock (auto &&cb, CRunningScript *script,
+                                    int count)
+    {
+        int offset = script->m_pCurrentIP - script->m_pBaseIP - 2;
+
+        char *result = cb ();
+
+        if (offset == 18096 && *result < 2)
+        {
+            *result = 2;
+        }
+
+        return result;
     }
 
     static char
