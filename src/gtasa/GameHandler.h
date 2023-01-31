@@ -455,6 +455,8 @@ private:
     static bool
     DoesPedHaveWeapon (CPed *ped, eWeaponType weapon)
     {
+        if (!IsPedPointerValid (ped)) return false;
+
         return ped->DoWeHaveWeaponAvailable (weapon);
     }
 
