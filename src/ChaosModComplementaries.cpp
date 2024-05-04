@@ -3,7 +3,7 @@
 
 #include <plugin.h>
 
-#define VERSION 1.3.7
+#define VERSION 1.3.8
 
 using namespace plugin;
 
