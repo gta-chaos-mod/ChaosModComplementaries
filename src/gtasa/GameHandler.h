@@ -495,13 +495,19 @@ private:
 
                 script->CollectParameters (2);
 
-                CPed       *ped = (CPed *) CTheScripts::ScriptParams[0].pParam;
+                CPed *ped
+                    = CPools::GetPed (CTheScripts::ScriptParams[0].iParam);
                 eWeaponType weapon
                     = (eWeaponType) CTheScripts::ScriptParams[1].iParam;
 
                 bool hasWeapon = DoesPedHaveWeapon (ped, weapon);
 
-                if (weapon == WEAPON_SPRAYCAN) hasWeapon = true;
+                // Tagging Up Turf fix - the ONLY mission that outright fails if
+                // you lose the spraycan.
+                if (weapon == WEAPON_SPRAYCAN)
+                {
+                    hasWeapon = true;
+                }
 
                 script->UpdateCompareFlag (hasWeapon);
                 return 0;
