@@ -111,14 +111,6 @@ public:
         HOOK (GlobalHooksInstance::Get (), Hooked_DrawBlur, void (float),
               0x704E8A);
 
-        // Lose weapons after busted or wasted
-        for (int address : {0x442E16 + 1, 0x4431CF + 1})
-        {
-            injector::WriteMemory<bool *> (address,
-                                           &loseWeaponsAfterDeathOrBusted,
-                                           true);
-        }
-
         // TODO: Option to disable music during dance and lowrider minigame
         // We will probably have to set the SFX volume to 0.
         // Alternatively, changing the pointer to our own variable
@@ -167,6 +159,20 @@ public:
         HOOK_METHOD_ARGS (GlobalHooksInstance::Get (), Hooked_OpCodes_1100_1199,
                           char (CRunningScript *, int), 0x48A320);
 
+        // Prevent losing weapons after death or busted
+        loseWeaponsAfterDeathOrBusted
+            = !CONFIG ("Fixes.PreventLosingWeapons", false);
+        if (!loseWeaponsAfterDeathOrBusted)
+        {
+            // Lose weapons after busted or wasted
+            for (int address : {0x442E16 + 1, 0x4431CF + 1})
+            {
+                injector::WriteMemory<bool *> (address,
+                                               &loseWeaponsAfterDeathOrBusted,
+                                               true);
+            }
+        }
+
         Missions::Initialise ();
 
         initialised = true;
@@ -196,9 +202,6 @@ private:
     static void
     UpdateConfigValues ()
     {
-        loseWeaponsAfterDeathOrBusted
-            = !CONFIG ("Fixes.PreventLosingWeapons", false);
-
         UpdateFrameDelay ();
         UpdateDisableReplays ();
         UpdateDisableInteriorMusic ();
