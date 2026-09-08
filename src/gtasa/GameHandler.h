@@ -305,8 +305,7 @@ private:
     {
         if (CONFIG ("Fixes.SkipGangTerritoriesCheck", false))
         {
-            CTheScripts::ScriptParams[0].iParam
-                = std::max (35, CTheScripts::ScriptParams[0].iParam);
+            ScriptParams[0].iParam = std::max (35, ScriptParams[0].iParam);
         }
 
         cb ();
@@ -415,11 +414,10 @@ private:
                 = {{"sweet", 10}, {"ryder", 13},  {"strap", 23}, {"wuzi", 21},
                    {"synd", 21},  {"desert", 21}, {"heist", 21}, {"oddveh", 8}};
 
-            int hour = hourMaps.contains (missionName)
-                           ? hourMaps[missionName]
-                           : CTheScripts::ScriptParams[0].iParam;
+            int hour = hourMaps.contains (missionName) ? hourMaps[missionName]
+                                                       : ScriptParams[0].iParam;
 
-            CTheScripts::ScriptParams[0].iParam = hour;
+            ScriptParams[0].iParam = hour;
         }
 
         cb ();
@@ -498,16 +496,14 @@ private:
 
                 script->CollectParameters (2);
 
-                CPed *ped
-                    = CPools::GetPed (CTheScripts::ScriptParams[0].iParam);
-                eWeaponType weapon
-                    = (eWeaponType) CTheScripts::ScriptParams[1].iParam;
+                CPed       *ped    = CPools::GetPed (ScriptParams[0].iParam);
+                eWeaponType weapon = (eWeaponType) ScriptParams[1].iParam;
 
                 bool hasWeapon = DoesPedHaveWeapon (ped, weapon);
 
                 // Tagging Up Turf fix - the ONLY mission that outright fails if
                 // you lose the spraycan.
-                if (weapon == WEAPON_SPRAYCAN)
+                if (weapon == WEAPONTYPE_SPRAYCAN)
                 {
                     hasWeapon = true;
                 }

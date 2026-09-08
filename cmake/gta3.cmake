@@ -4,13 +4,27 @@ set(CHAOS_3 ${PROJECT_NAME}.III)
 
 file(GLOB_RECURSE III_SOURCES CONFIGURE_DEPENDS src/ChaosModComplementaries.cpp src/shared/*.cpp src/gta3/*.cpp)
 
+file(GLOB_RECURSE III_SOURCES CONFIGURE_DEPENDS
+	src/ChaosModComplementaries.cpp
+	src/shared/*.cpp
+	src/shared/*.h
+	src/shared/*.hpp
+	src/gta3/*.cpp
+	src/gta3/*.h
+	src/gta3/*.hpp
+)
+
 add_library(${CHAOS_3} SHARED ${III_SOURCES})
 
 set_target_properties(${CHAOS_3} PROPERTIES SUFFIX ".asi")
 
-target_include_directories(${CHAOS_3} PUBLIC "src/shared/" "src/gta3")
+target_include_directories(${CHAOS_3} PUBLIC
+	"src/"
+	"src/shared"
+	"src/gta3"
+)
 
-target_link_libraries(${CHAOS_3} PUBLIC plugin_III minhook efsw)
+target_link_libraries(${CHAOS_3} PUBLIC PluginSDK::gta3 minhook efsw)
 
 target_compile_definitions(${CHAOS_3} PUBLIC NOMINMAX)
 

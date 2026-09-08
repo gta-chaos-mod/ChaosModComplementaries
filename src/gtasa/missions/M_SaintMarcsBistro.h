@@ -2,6 +2,7 @@
 
 #include "util/Config.h"
 #include "util/GlobalHooksInstance.h"
+#include "util/ScriptParams.h"
 #include "util/hooks/HookMacros.h"
 
 #include <CTheScripts.h>
@@ -49,10 +50,10 @@ private:
 
         if (std::string (thisScript->m_szName) == "casin10")
         {
-            if (CTheScripts::ScriptParams[0].fParam == 7500.0f)
+            if (ScriptParams[0].fParam == 7500.0f)
             {
-                CTheScripts::ScriptParams[0].fParam = newLCLocation.x;
-                CTheScripts::ScriptParams[1].fParam = newLCLocation.y;
+                ScriptParams[0].fParam = newLCLocation.x;
+                ScriptParams[1].fParam = newLCLocation.y;
             }
         }
     }
@@ -67,12 +68,12 @@ private:
         if (!CONFIG ("Fixes.CloserLibertyCityFlight", true)) return;
 
         if (std::string (thisScript->m_szName) == "casin10"
-            && CTheScripts::ScriptParams[0].iParam == 519)
+            && ScriptParams[0].iParam == 519)
         {
-            if (CTheScripts::ScriptParams[1].fParam == 7500.0f)
+            if (ScriptParams[1].fParam == 7500.0f)
             {
-                CTheScripts::ScriptParams[1].fParam = newLCLocation.x;
-                CTheScripts::ScriptParams[2].fParam = newLCLocation.y;
+                ScriptParams[1].fParam = newLCLocation.x;
+                ScriptParams[2].fParam = newLCLocation.y;
             }
         }
     }
@@ -88,10 +89,10 @@ private:
 
         if (std::string (thisScript->m_szName) == "casin10")
         {
-            if (CTheScripts::ScriptParams[1].fParam == 7500.0f)
+            if (ScriptParams[1].fParam == 7500.0f)
             {
-                CTheScripts::ScriptParams[1].fParam = newLCLocation.x;
-                CTheScripts::ScriptParams[2].fParam = newLCLocation.y;
+                ScriptParams[1].fParam = newLCLocation.x;
+                ScriptParams[2].fParam = newLCLocation.y;
             }
         }
     }
@@ -107,10 +108,10 @@ private:
 
         if (std::string (thisScript->m_szName) == "casin10")
         {
-            if (CTheScripts::ScriptParams[1].fParam == 7500.0f)
+            if (ScriptParams[1].fParam == 7500.0f)
             {
-                CTheScripts::ScriptParams[1].fParam = newLCLocation.x;
-                CTheScripts::ScriptParams[2].fParam = newLCLocation.y;
+                ScriptParams[1].fParam = newLCLocation.x;
+                ScriptParams[2].fParam = newLCLocation.y;
             }
         }
     }
