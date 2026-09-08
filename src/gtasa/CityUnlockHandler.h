@@ -1,6 +1,8 @@
 #pragma once
 
 #include "util/Config.h"
+#include "util/GlobalHooksInstance.h"
+#include "util/hooks/HookMacros.h"
 
 #include <CIplStore.h>
 #include <CStats.h>
@@ -9,8 +11,13 @@
 using namespace plugin;
 
 // Thanks to zolika for the find and help on this!
+
+// Additionally thanks to awaken for his work on the Archipelago mod
+// (Specifically the new way for disabling the 4 star wanted level)
 class CityUnlockHandler
 {
+    static inline bool hasWantedLevelCheckBeenNopped = false;
+
     static bool
     IsIPLEnabled (char *name)
     {
@@ -86,15 +93,22 @@ public:
     }
 
     static void
+    Hooked_SetPlayerWantedLevelForForbiddenTerritories (auto &&cb,
+                                                        char   townNumber)
+    {
+    }
+
+    static void
     UnlockCities ()
     {
         if (!CONFIG ("Fixes.UnlockCities", false)) return;
+        if (hasWantedLevelCheckBeenNopped) return;
 
-        int citiesUnlocked = CStats::GetStatValue (181);
-        if (citiesUnlocked != 3)
-        {
-            CStats::SetStatValue (181, 3);
-        }
+        hasWantedLevelCheckBeenNopped = true;
+
+        HOOK_ARGS (GlobalHooksInstance::Get (),
+                   Hooked_SetPlayerWantedLevelForForbiddenTerritories,
+                   void (char), 0x442AE5, 0x562E3A);
     }
 
     static void
