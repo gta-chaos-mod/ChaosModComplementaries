@@ -13,13 +13,16 @@
 #include <CAnimManager.h>
 #include <CCamera.h>
 #include <CCheat.h>
+#include <CCutsceneMgr.h>
+#include <CEntryExitManager.h>
+#include <CHud.h>
 #include <CMenuManager.h>
 #include <CPickups.h>
 #include <CReferences.h>
 #include <CStats.h>
-#include <CTaskSimpleRunNamedAnim.h>
 #include <CTheScripts.h>
 #include <CTimer.h>
+#include <CWorld.h>
 
 using namespace plugin;
 
@@ -93,6 +96,74 @@ class GameHandler
     static inline bool disableReplaysEnabled       = false;
     static inline bool disableInteriorMusicEnabled = false;
 
+    static bool
+    IsCutsceneProcessing ()
+    {
+        CPlayerPed *player = FindPlayerPed ();
+        if (!player) return true;
+
+        CPad *pad = player->GetPadFromPlayer ();
+        if (!pad) return true;
+
+        if (pad->bPlayerOnInteriorTransition || pad->bPlayerSafe
+            || pad->bPlayerSafeForCutscene)
+        {
+            return true;
+        }
+
+        if (CCutsceneMgr::ms_cutsceneProcessing || CCutsceneMgr::ms_running)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    static bool
+    IsPlayerSafe ()
+    {
+        CPlayerPed *player = FindPlayerPed ();
+        if (!player || !player->CanSetPedState () || !player->IsAlive ())
+        {
+            return false;
+        }
+
+        switch (player->m_ePedState)
+        {
+            case PEDSTATE_ARRESTED:
+            case PEDSTATE_ARREST_PLAYER:
+            case PEDSTATE_DEAD:
+            case PEDSTATE_DIE:
+            case PEDSTATE_DIE_BY_STEALTH: return false;
+            default:
+            {
+            }
+        }
+
+        if (player->m_pAttachedTo) return false;
+
+        CPlayerData *data = player->m_pPlayerData;
+        if (!data || !data->m_bCanBeDamaged) return false;
+
+        CPad *pad = player->GetPadFromPlayer ();
+        if (!pad) return false;
+
+        if (pad->bPlayerOnInteriorTransition || pad->bPlayerSafe
+            || pad->bPlayerSafeForCutscene)
+        {
+            return false;
+        }
+
+        if (IsCutsceneProcessing ())
+        {
+            return false;
+        }
+
+        if (CEntryExitManager::WeAreInInteriorTransition ()) return false;
+
+        return true;
+    }
+
 public:
     static void
     Initialise ()
@@ -151,6 +222,15 @@ public:
                           Hooked_FixDriveBySpeedSoftlock,
                           char *(CRunningScript *, int), 0x46665C);
 
+        // Can Ped Jump Out Of Car
+        HOOK_METHOD_ARGS (GlobalHooksInstance::Get (), Hooked_CanPedJumpOutCar,
+                          bool (CVehicle *, CPed *), 0x6D2030);
+
+        // Broken parachute fix where it plays the animation but CJ can't be
+        // controlled mid-air
+        HOOK (GlobalHooksInstance::Get (), Hooked_BrokenParachuteFix, CPed * (),
+              0x443082);
+
         // Hook OPCodes 500-599
         HOOK_METHOD_ARGS (GlobalHooksInstance::Get (), Hooked_OpCodes_500_599,
                           char (CRunningScript *, int), 0x47E090);
@@ -173,6 +253,11 @@ public:
             }
         }
 
+        // Fix Rockstar's infinite wisdom of multiplying by the magic screen
+        // height number twice for the side UI (like Taxi meter, Fares, etc.)
+        // Context: https://fixupx.com/Lordmau5/status/2096650919718875307
+        plugin::patch::Nop (0x58B54B, 2);
+
         Missions::Initialise ();
 
         initialised = true;
@@ -187,6 +272,8 @@ public:
         HandleNoCheatInput ();
         HandleSkipWastedBustedHelpMessages ();
         HandleCheapAirport ();
+
+        HandleFallingOffBike ();
 
         Missions::ProcessGame ();
         CityUnlockHandler::Process ();
@@ -269,6 +356,18 @@ private:
                 pickup.m_nAmmo = 5;
             }
         }
+    }
+
+    // TODO: Are there missions where this is set?
+    static void
+    HandleFallingOffBike ()
+    {
+        if (!CONFIG ("Fixes.PreventFallingOffBike", false)) return;
+
+        CPlayerPed *player = FindPlayerPed ();
+        if (!player) return;
+
+        player->CantBeKnockedOffBike = true;
     }
 
     static void
@@ -454,6 +553,32 @@ private:
         }
 
         return result;
+    }
+
+    static bool
+    Hooked_CanPedJumpOutCar (auto &&cb, CVehicle *vehicle, CPed *ped)
+    {
+        if (!CONFIG ("Fixes.AllowPlayerToJumpOutOfSlowCar", true)) return cb ();
+        if (!IsPlayerSafe ()) return cb ();
+
+        if (vehicle->IsDriver (ped)) return cb ();
+
+        // Get vehicle speed in km/h
+        float speed = vehicle->m_vecMoveSpeed.Magnitude () * 175.0f;
+
+        return speed > 25.0f || cb ();
+    }
+
+    static CPed *
+    Hooked_BrokenParachuteFix (auto &&cb)
+    {
+        int &parachuteCreationStage = GetGlobalVariable<int> (1497);
+        int &freefallStage          = GetGlobalVariable<int> (1513);
+
+        parachuteCreationStage = 0;
+        freefallStage          = 0;
+
+        return cb ();
     }
 
     static char

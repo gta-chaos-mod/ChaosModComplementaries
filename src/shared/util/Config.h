@@ -119,6 +119,16 @@ BurningDesireHomeSoftlock = true
 # Default: true
 DisableMissionWeaponChecks = true
 
+# Prevents the player from falling off a bike
+# Default: false
+PreventFallingOffBike = false
+
+# Allows the player to jump out of a car that is too fast to exit normally but too slow to jump out.
+# Typically this is problematic when the player is in the passenger seat of an NPC car as they
+# drive a really odd speed.
+# Default: true
+AllowPlayerToJumpOutOfSlowCar = true
+
 #######################################################)";
 #else
     inline static std::string configContent = "";
