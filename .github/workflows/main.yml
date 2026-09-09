@@ -16,13 +16,13 @@ jobs:
     steps:
     # 1. Setup x86 MSVC environment for Ninja & CMake
     - name: Setup x86 MSVC Command Prompt
-      uses: ilammy/msvc-dev-cmd@v1.13.0
+      uses: TheMrMilchmann/setup-msvc-dev@v4
       with:
         arch: x86
 
     # 2. Checkout main project repository
     - name: Checkout ChaosModComplementaries
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     # 3. Clone PluginSDK into 'plugin-sdk'
     - name: Clone PluginSDK
@@ -33,14 +33,14 @@ jobs:
     # 4. Cache compiled PluginSDK static libraries
     - name: Cache PluginSDK Output
       id: cache-pluginsdk
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: plugin-sdk/output
         key: pluginsdk-${{ runner.os }}-${{ hashFiles('plugin-sdk/**') }}
 
     - name: Setup MSBuild
       if: steps.cache-pluginsdk.outputs.cache-hit != 'true'
-      uses: microsoft/setup-msbuild@v2
+      uses: microsoft/setup-msbuild@v3
 
     # 5. Generate and build PluginSDK ONLY if cache missed
     - name: Generate PluginSDK Solution via Premake
@@ -78,21 +78,21 @@ jobs:
 
     # 8. Upload individual ASI artifacts
     - name: Upload III Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: "ChaosModComplementaries.III"
         path: build/output_III/
         if-no-files-found: ignore
 
     - name: Upload VC Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: "ChaosModComplementaries.VC"
         path: build/output_VC/
         if-no-files-found: ignore
 
     - name: Upload SA Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: "ChaosModComplementaries.SA"
         path: build/output_SA/
