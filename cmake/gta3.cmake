@@ -2,8 +2,6 @@
 # ############################### GTA 3 ###############################
 set(CHAOS_3 ${PROJECT_NAME}.III)
 
-file(GLOB_RECURSE III_SOURCES CONFIGURE_DEPENDS src/ChaosModComplementaries.cpp src/shared/*.cpp src/gta3/*.cpp)
-
 file(GLOB_RECURSE III_SOURCES CONFIGURE_DEPENDS
 	src/ChaosModComplementaries.cpp
 	src/shared/*.cpp

@@ -28,7 +28,11 @@ jobs:
     - name: Clone PluginSDK
       shell: cmd
       run: |
-        if not exist plugin-sdk git clone https://github.com/DK22Pac/plugin-sdk.git plugin-sdk
+        if not exist plugin-sdk (
+            git clone https://github.com/DK22Pac/plugin-sdk.git plugin-sdk
+            cd plugin-sdk
+            git checkout 15f15b60bbf74c106e1b496ff92c98764abf4605
+        )
 
     # 4. Cache compiled PluginSDK static libraries
     - name: Cache PluginSDK Output
