@@ -1,59 +1,99 @@
-name: CMake
+name: Build And Create Artifacts
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: windows-latest
 
-    steps:
-    - uses: actions/checkout@v4
+    env:
+      PLUGIN_SDK_DIR: ${{ github.workspace }}/plugin-sdk
 
-    - name: Setup
+    steps:
+    # 1. Setup x86 MSVC environment for Ninja & CMake
+    - name: Setup x86 MSVC Command Prompt
       uses: ilammy/msvc-dev-cmd@v1.13.0
       with:
         arch: x86
 
-    - name: Cache bin
-      id: cache-bin
+    # 2. Checkout main project repository
+    - name: Checkout ChaosModComplementaries
+      uses: actions/checkout@v4
+
+    # 3. Clone PluginSDK into 'plugin-sdk'
+    - name: Clone PluginSDK
+      shell: cmd
+      run: |
+        if not exist plugin-sdk git clone https://github.com/DK22Pac/plugin-sdk.git plugin-sdk
+
+    # 4. Cache compiled PluginSDK static libraries
+    - name: Cache PluginSDK Output
+      id: cache-pluginsdk
       uses: actions/cache@v4
       with:
-        path: bin
-        key: ${{ runner.os }}-bin
+        path: plugin-sdk/output
+        key: pluginsdk-${{ runner.os }}-${{ hashFiles('plugin-sdk/**') }}
 
-    - name: Create bin folder
-      if: steps.cache-bin.outputs.cache-hit != 'true'
-      run: |
-        mkdir bin
-        cd bin
-        cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release ../
-        mkdir output_III
-        mkdir output_VC
-        mkdir output_SA
-    
-    - name: Compile
-      run: |
-        cd bin
-        ninja
-        cp ChaosModComplementaries.III.asi output_III/ChaosModComplementaries.III.asi
-        cp ChaosModComplementaries.VC.asi output_VC/ChaosModComplementaries.VC.asi
-        cp ChaosModComplementaries.SA.asi output_SA/ChaosModComplementaries.SA.asi
+    - name: Setup MSBuild
+      if: steps.cache-pluginsdk.outputs.cache-hit != 'true'
+      uses: microsoft/setup-msbuild@v2
 
-    - name: Upload III
+    # 5. Generate and build PluginSDK ONLY if cache missed
+    - name: Generate PluginSDK Solution via Premake
+      if: steps.cache-pluginsdk.outputs.cache-hit != 'true'
+      run: |
+        & "$env:PLUGIN_SDK_DIR\tools\premake\premake5.exe" vs2026 --file="$env:PLUGIN_SDK_DIR\tools\premake\premake5.lua"
+
+    - name: Build PluginSDK Static Libraries
+      if: steps.cache-pluginsdk.outputs.cache-hit != 'true'
+      shell: cmd
+      run: |
+        msbuild "%PLUGIN_SDK_DIR%\plugin_III\Plugin_III.vcxproj" /p:Configuration=Release /p:Platform=Win32 /m
+        msbuild "%PLUGIN_SDK_DIR%\plugin_vc\Plugin_VC.vcxproj" /p:Configuration=Release /p:Platform=Win32 /m
+        msbuild "%PLUGIN_SDK_DIR%\plugin_sa\Plugin_SA.vcxproj" /p:Configuration=Release /p:Platform=Win32 /m
+
+    # 6. Configure and Build CMake project
+    - name: Configure CMake
+      run: |
+        cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+    - name: Compile Plugins
+      run: |
+        cmake --build build --config Release
+
+    # 7. Organize outputs into designated directories
+    - name: Organize Output Folders
+      shell: cmd
+      run: |
+        if not exist build\output_III mkdir build\output_III
+        if not exist build\output_VC mkdir build\output_VC
+        if not exist build\output_SA mkdir build\output_SA
+        if exist build\ChaosModComplementaries.III.asi copy build\ChaosModComplementaries.III.asi build\output_III\
+        if exist build\ChaosModComplementaries.VC.asi copy build\ChaosModComplementaries.VC.asi build\output_VC\
+        if exist build\ChaosModComplementaries.SA.asi copy build\ChaosModComplementaries.SA.asi build\output_SA\
+
+    # 8. Upload individual ASI artifacts
+    - name: Upload III Artifact
       uses: actions/upload-artifact@v4
       with:
         name: "ChaosModComplementaries.III"
-        path: bin/output_III
+        path: build/output_III/
+        if-no-files-found: ignore
 
-    - name: Upload VC
+    - name: Upload VC Artifact
       uses: actions/upload-artifact@v4
       with:
         name: "ChaosModComplementaries.VC"
-        path: bin/output_VC
-        
-    - name: Upload SA
+        path: build/output_VC/
+        if-no-files-found: ignore
+
+    - name: Upload SA Artifact
       uses: actions/upload-artifact@v4
       with:
         name: "ChaosModComplementaries.SA"
-        path: bin/output_SA
-  
+        path: build/output_SA/
+        if-no-files-found: ignore
