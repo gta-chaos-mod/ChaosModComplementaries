@@ -64,7 +64,7 @@ private:
     Hooked_CollectParameters_EarlyFinish (auto &&cb, CRunningScript *script,
                                           unsigned __int16 count)
     {
-        if (!CONFIG ("Fixes.BurningDesireHomeSoftlock", true)) return cb ();
+        if (!CONFIG ("Fixes.BurningDesireHomeSoftlock", false)) return cb ();
 
         int offset = script->m_pCurrentIP - script->m_pBaseIP - 2;
 

@@ -72,6 +72,7 @@ jobs:
       run: |
         if not exist build\output mkdir build\output
         if exist build\ChaosModComplementaries.SA.asi copy build\ChaosModComplementaries.SA.asi build\output\
+        if exist ChaosModComplementaries.SA.toml copy ChaosModComplementaries.SA.toml build\output\
         if exist THIRD_PARTY_NOTICES.md copy THIRD_PARTY_NOTICES.md build\output\
 
     # 8. Upload ASI artifact
