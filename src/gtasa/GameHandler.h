@@ -245,7 +245,7 @@ public:
         if (!loseWeaponsAfterDeathOrBusted)
         {
             // Lose weapons after busted or wasted
-            for (int address : {0x442E16 + 1, 0x4431CF + 1})
+            for (int address : { 0x442E16 + 1, 0x4431CF + 1 })
             {
                 injector::WriteMemory<bool *> (address,
                                                &loseWeaponsAfterDeathOrBusted,
@@ -510,8 +510,9 @@ private:
             std::string missionName (thisScript->m_szName);
 
             std::map<std::string, int> hourMaps
-                = {{"sweet", 10}, {"ryder", 13},  {"strap", 23}, {"wuzi", 21},
-                   {"synd", 21},  {"desert", 21}, {"heist", 21}, {"oddveh", 8}};
+                = { { "sweet", 10 }, { "ryder", 13 }, { "strap", 23 },
+                    { "wuzi", 21 },  { "synd", 21 },  { "desert", 21 },
+                    { "heist", 21 }, { "oddveh", 8 } };
 
             int hour = hourMaps.contains (missionName) ? hourMaps[missionName]
                                                        : ScriptParams[0].iParam;

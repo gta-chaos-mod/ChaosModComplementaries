@@ -86,8 +86,7 @@
             [] (auto &&cb)                                                     \
             {                                                                  \
                 return std::apply ([&] (auto &...args)                         \
-                                   { return func (cb, args...); },             \
-                                   cb.params);                                 \
+                                   { return func (cb, args...); }, cb.params); \
             },                                                                 \
             inst, hook);                                                       \
     }

@@ -17,7 +17,7 @@ public:
     }
 
 private:
-    static inline CVector2D newLCLocation = {4500.0f, 2000.0f};
+    static inline CVector2D newLCLocation = { 4500.0f, 2000.0f };
 
     void
     CloserLibertyCityFlight ()
